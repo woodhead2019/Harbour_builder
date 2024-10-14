@@ -60,13 +60,13 @@ jobs:
 
     - name: Get current time
       id: current-time
-      uses: Kaven-Universe/github-action-current-date-time@v1
-      with:
-       format: "yyyyMMdd"
+      shell: pwsh
+      run: |
+        $time = Get-Date -Format "yyyyMMdd"
+        echo "TIME=$time" | Out-File -Append $env:GITHUB_ENV
 
     - name: Upload Harbour to artifact
       uses: actions/upload-artifact@v4
       with:
-        name: harbour_win32_bcc_${{ steps.current-time.outputs.formattedTime }}
+        name: harbour_win32_bcc_${{ env.TIME }}
         path: output
-        
