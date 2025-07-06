@@ -20,21 +20,16 @@ jobs:
     - name: Install dependencies
       shell: pwsh
       run: |
-        $rawUrl = "https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp"
-        $downloads = @(
-          @{Url="$rawUrl/OpenSSL-Win32.zip"; Out="C:\temp\OpenSSL-Win32.zip"; Extract="C:\OpenSSL"},
-          @{Url="$rawUrl/curl-7.54.0-win32-mingw.zip"; Out="C:\temp\curl-7.54.0-win32-mingw.zip"; Extract="C:\curl"},
-          @{Url="$rawUrl/acesdk.zip"; Out="C:\temp\acesdk.zip"; Extract="C:\acesdk"},
-          @{Url="$rawUrl/libcurl.lib"; Out="C:\temp\libcurl.lib"},
-          @{Url="$rawUrl/bcc70.zip"; Out="C:\temp\bcc70.zip"; Extract="C:\bcc7"}
-        )
-        New-Item -Path C:\temp -ItemType Directory -Force
-        foreach ($item in $downloads) {
-          Invoke-WebRequest -Uri $item.Url -OutFile $item.Out -ErrorAction Stop
-          if ($item.Extract) {
-            Expand-Archive -Path $item.Out -DestinationPath $item.Extract -Force
-          }
-        }
+         New-Item -Path C:\temp -ItemType Directory -Force
+         Invoke-WebRequest -Uri 'https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp/OpenSSL-Win32.zip' -OutFile 'C:\temp\OpenSSL-Win32.zip'
+         Expand-Archive -LiteralPath 'C:\temp\OpenSSL-Win32.zip' -DestinationPath 'C:\OpenSSL' -Force
+         Invoke-WebRequest -Uri 'https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp/curl-7.54.0-win32-mingw.zip' -OutFile 'C:\temp\curl-7.54.0-win32-mingw.zip'
+         Expand-Archive -LiteralPath 'C:\temp\curl-7.54.0-win32-mingw.zip' -DestinationPath 'C:\curl' -Force        
+         Invoke-WebRequest -Uri 'https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp/win32/bcc7/libcurl.lib' -OutFile 'C:\temp\libcurl.lib'
+         Invoke-WebRequest -Uri 'https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp/bcc70.zip' -OutFile 'C:\temp\bcc70.zip'
+         Expand-Archive -LiteralPath 'C:\temp\bcc70.zip' -DestinationPath 'C:\bcc7' -Force
+         Invoke-WebRequest -Uri 'https://github.com/woodhead2019/Harbour_builder/raw/master/.github/temp/acesdk.zip' -OutFile 'C:\temp\acesdk.zip'
+         Expand-Archive -LiteralPath 'C:\temp\acesdk.zip' -DestinationPath 'C:\acesdk' -Force
 
     - name: Compile Harbour
       shell: cmd
