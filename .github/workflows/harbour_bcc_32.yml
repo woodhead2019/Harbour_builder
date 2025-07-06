@@ -66,9 +66,7 @@ jobs:
         xcopy harbour\include output\include /E /I /Y
 
     - name: Get current time
-      id
-
-: current-time
+      id: current-time
       shell: pwsh
       run: echo "TIME=$(Get-Date -Format 'yyyyMMdd')" >> $env:GITHUB_ENV
 
