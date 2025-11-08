@@ -10,10 +10,10 @@ jobs:
     if: github.actor == github.event.repository.owner.login
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: Checkout harbour/core repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
        repository: harbour/core
        path: harbour
@@ -60,7 +60,7 @@ jobs:
     - name: Upload Harbour to artifact
       env:
          TIME: "${{ steps.current-time.outputs.formattedTime }}"
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
        name: harbour_win32_msvc_${{ env.TIME }}
        path: output
