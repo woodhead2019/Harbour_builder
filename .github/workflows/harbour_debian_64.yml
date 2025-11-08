@@ -9,9 +9,6 @@ jobs:
     if: github.actor == github.event.repository.owner.login
 
     steps:
-      # -------------------------------------------------
-      # 1. 检出代码
-      # -------------------------------------------------
       - name: Checkout mod_harbour repo
         uses: actions/checkout@v4
 
@@ -21,27 +18,21 @@ jobs:
           repository: harbour/core
           path: harbour
 
-      # -------------------------------------------------
-      # 2. 安装依赖
-      # -------------------------------------------------
+      # 修复这里：libcurl4-openssl-dev
       - name: Install build & packaging dependencies
         run: |
           sudo apt update
           sudo apt install -y \
             build-essential \
-            libcurl4-opensdev \
+            libcurl4-openssl-dev \
             libssl-dev \
             libpcre3-dev \
             checkinstall \
             git
 
-          # 兼容 curl 头文件
           sudo mkdir -p /usr/include/curl
           sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
 
-      # -------------------------------------------------
-      # 3. 设置版本信息
-      # -------------------------------------------------
       - name: Set build metadata
         run: |
           BUILD_DATE=$(date +'%Y_%m_%d')
@@ -52,9 +43,6 @@ jobs:
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
-      # -------------------------------------------------
-      # 4. 编译 Harbour
-      # -------------------------------------------------
       - name: Compile harbour
         run: |
           cd harbour
@@ -63,36 +51,24 @@ jobs:
           export HB_WITH_PCRE=local
           make -j$(nproc)
 
-      # -------------------------------------------------
-      # 5. 安装到 DESTDIR（关键！）
-      # -------------------------------------------------
       - name: Install to DESTDIR
         run: |
           cd harbour
           DESTDIR="$(pwd)/../debian-root"
           rm -rf "$DESTDIR"
           mkdir -p "$DESTDIR"
-
-          # 关键：手动执行 make install 到 DESTDIR
           make install DESTDIR="$DESTDIR"
 
-      # -------------------------------------------------
-      # 6. 使用 checkinstall 打包 DESTDIR（不执行 install）
-      # -------------------------------------------------
       - name: Build Debian package with checkinstall
         run: |
           cd debian-root
-
-          # 创建一个空脚本，checkinstall 必须有命令
           cat > fake-install.sh <<'EOF'
           #!/bin/sh
-          echo "Files already installed to DESTDIR. Skipping installation."
+          echo "Files already in DESTDIR."
           EOF
           chmod +x fake-install.sh
 
-          # checkinstall 仅打包，不执行安装
           sudo checkinstall -D --install=no \
-            --fstrans=no \
             --pkgname=harbour \
             --pkgversion="${{ env.PKG_VERSION }}" \
             --pkgrelease=1 \
@@ -103,12 +79,8 @@ jobs:
             --pak \
             ./fake-install.sh
 
-          # 移动 .deb 到 workspace
           sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
 
-      # -------------------------------------------------
-      # 7. 准备 raw output（开发者用）
-      # -------------------------------------------------
       - name: Create raw output directory
         run: |
           mkdir -p output/bin output/lib output/include
@@ -116,9 +88,6 @@ jobs:
           cp harbour/lib/linux/gcc/*.a output/lib/ 2>/dev/null || true
           cp -r harbour/include/* output/include/ 2>/dev/null || true
 
-      # -------------------------------------------------
-      # 8. 上传 .deb（用户）
-      # -------------------------------------------------
       - name: Upload Debian package (.deb only)
         uses: actions/upload-artifact@v4
         with:
@@ -126,9 +95,6 @@ jobs:
           path: |
             *.deb
 
-      # -------------------------------------------------
-      # 9. 上传原始文件（开发者）
-      # -------------------------------------------------
       - name: Upload raw compiled files
         uses: actions/upload-artifact@v4
         with:
