@@ -18,7 +18,7 @@ jobs:
           repository: harbour/core
           path: harbour
 
-      - name: Install build & packaging dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -26,7 +26,6 @@ jobs:
             libcurl4-openssl-dev \
             libssl-dev \
             libpcre3-dev \
-            checkinstall \
             git
 
           sudo mkdir -p /usr/include/curl
@@ -58,31 +57,31 @@ jobs:
           mkdir -p "$DESTDIR"
           make install DESTDIR="$DESTDIR"
 
-      - name: Build Debian package with checkinstall
+      - name: Build Debian package with dpkg-deb
         run: |
-          cd debian-root
+          mkdir -p debian-root/DEBIAN
 
-          cat > fake-install.sh <<'EOF'
-          #!/bin/sh
-          echo "Skipping installation. Files already in DESTDIR."
-          EOF
-          chmod +x fake-install.sh
+          cat > debian-root/DEBIAN/control <<EOF
+Package: harbour
+Version: ${{ env.PKG_VERSION }}
+Section: devel
+Priority: optional
+Architecture: amd64
+Essential: no
+Installed-Size: $(du -sk debian-root/usr | cut -f1)
+Maintainer: GitHub Actions
+Depends: libc6, libcurl4, libssl3, libpcre3
+Description: Harbour compiler and runtime for Linux
+ Harbour is a multi-platform compiler compatible with Clipper.
+EOF
 
-          sudo checkinstall -D \
-            --install=no \
-            --backup=no \
-            --fstrans=no \
-            --pkgname=harbour \
-            --pkgversion="${{ env.PKG_VERSION }}" \
-            --pkgrelease=1 \
-            --pkglicense=GPL \
-            --maintainer="GitHub Actions" \
-            --requires="libc6, libcurl4, libssl3, libpcre3" \
-            --nodoc \
-            --pak \
-            ./fake-install.sh
+          find debian-root/usr -type d -exec chmod 755 {} \;
+          find debian-root/usr -type f -exec chmod 644 {} \;
+          find debian-root/usr/bin -type f -exec chmod 755 {} \;
 
-          sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
+          dpkg-deb --build --root-owner-group debian-root
+
+          mv debian-root.deb "${{ github.workspace }}/harbour_${{ env.PKG_VERSION }}-1_amd64.deb"
 
       - name: Create raw output directory
         run: |
@@ -96,7 +95,7 @@ jobs:
         with:
           name: harbour_debian_64_${{ env.BUILD_DATE }}_deb
           path: |
-            *.deb
+            harbour_*.deb
 
       - name: Upload raw compiled files
         uses: actions/upload-artifact@v4
