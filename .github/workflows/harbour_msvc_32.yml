@@ -10,7 +10,7 @@ jobs:
     if: github.actor == github.event.repository.owner.login
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4     # 1. 检出本仓库（含 .github/temp/ 下的两个 zip）
     
     - name: Checkout harbour/core repo
       uses: actions/checkout@v4
@@ -20,16 +20,20 @@ jobs:
 
     - name: Install dependencies
       run: |
-         (new-object System.Net.WebClient).DownloadFile('https://bitbucket.org/lorenzodla/mod_harbour_actions_resources/downloads/OpenSSL-Win32.zip', 'C:\temp\OpenSSL-Win32.zip')
-         Expand-Archive -LiteralPath C:\temp\OpenSSL-Win32.zip -DestinationPath C:\OpenSSL -Force
-         (new-object System.Net.WebClient).DownloadFile('https://bitbucket.org/lorenzodla/mod_harbour_actions_resources/downloads/curl-7.54.0-win32-mingw.zip', 'C:\temp\curl-7.54.0-win32-mingw.zip')
-         Expand-Archive -LiteralPath C:\temp\curl-7.54.0-win32-mingw.zip -DestinationPath C:\curl -Force
-         
+         Expand-Archive -Path ".github\temp\OpenSSL-Win32.zip" -DestinationPath "C:\OpenSSL" -Force
+         Expand-Archive -Path ".github\temp\curl-7.54.0-win32-mingw.zip" -DestinationPath "C:\curl" -Force
+
+      # 5. 设置 MSVC 环境
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+          
     - name: Compile Harbour
       shell: cmd
       run: |
         cd harbour
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
+        # call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
         set HB_BUILD_MODE=c
         set HB_USER_PRGFLAGS=-l-
         set HB_BUILD_CONTRIBS=
