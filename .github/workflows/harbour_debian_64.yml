@@ -49,13 +49,27 @@ jobs:
           export HB_WITH_PCRE=local
           make -j$(nproc)
 
-      - name: Install to DESTDIR
+      - name: Install to DESTDIR (manual copy)
         run: |
-          cd harbour
-          DESTDIR="$(pwd)/../debian-root"
+          DESTDIR="$(pwd)/debian-root"
           rm -rf "$DESTDIR"
-          mkdir -p "$DESTDIR"
-          make install DESTDIR="$DESTDIR"
+          mkdir -p "$DESTDIR/usr/local/bin"
+          mkdir -p "$DESTDIR/usr/local/lib"
+          mkdir -p "$DESTDIR/usr/local/include/harbour"
+          mkdir -p "$DESTDIR/usr/local/share/doc/harbour"
+
+          # 复制可执行文件
+          cp harbour/bin/linux/gcc/* "$DESTDIR/usr/local/bin/" 2>/dev/null || true
+
+          # 复制静态库
+          cp harbour/lib/linux/gcc/*.a "$DESTDIR/usr/local/lib/" 2>/dev/null || true
+
+          # 复制头文件
+          cp -r harbour/include/* "$DESTDIR/usr/local/include/harbour/" 2>/dev/null || true
+
+          # 复制文档
+          cp harbour/doc/*.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
+          cp harbour/ChangeLog.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
 
       - name: Calculate installed size
         run: |
@@ -69,7 +83,6 @@ jobs:
         run: |
           mkdir -p debian-root/DEBIAN
 
-          # 终极安全写法：printf
           printf '%s\n' "Package: harbour" \
                         "Version: $PKG_VERSION" \
                         "Section: devel" \
