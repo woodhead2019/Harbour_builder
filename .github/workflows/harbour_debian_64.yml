@@ -18,7 +18,6 @@ jobs:
           repository: harbour/core
           path: harbour
 
-      # 修复这里：libcurl4-openssl-dev
       - name: Install build & packaging dependencies
         run: |
           sudo apt update
@@ -62,6 +61,7 @@ jobs:
       - name: Build Debian package with checkinstall
         run: |
           cd debian-root
+
           cat > fake-install.sh <<'EOF'
           #!/bin/sh
           echo "Files already in DESTDIR."
@@ -73,7 +73,7 @@ jobs:
             --pkgversion="${{ env.PKG_VERSION }}" \
             --pkgrelease=1 \
             --pkglicense=GPL \
-            --maintainer="GitHub Actions <noreply@github.com>" \
+            --maintainer="GitHub Actions (noreply@github.com)" \
             --requires="libc6, libcurl4, libssl3, libpcre3" \
             --nodoc \
             --pak \
