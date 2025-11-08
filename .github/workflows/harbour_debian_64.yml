@@ -64,16 +64,19 @@ jobs:
 
           cat > fake-install.sh <<'EOF'
           #!/bin/sh
-          echo "Files already in DESTDIR."
+          echo "Skipping installation. Files already in DESTDIR."
           EOF
           chmod +x fake-install.sh
 
-          sudo checkinstall -D --install=no \
+          sudo checkinstall -D \
+            --install=no \
+            --backup=no \
+            --fstrans=no \
             --pkgname=harbour \
             --pkgversion="${{ env.PKG_VERSION }}" \
             --pkgrelease=1 \
             --pkglicense=GPL \
-            --maintainer="GitHub Actions (noreply@github.com)" \
+            --maintainer="GitHub Actions" \
             --requires="libc6, libcurl4, libssl3, libpcre3" \
             --nodoc \
             --pak \
