@@ -24,10 +24,10 @@ jobs:
          Expand-Archive -Path ".github\temp\curl-7.54.0-win32-mingw.zip" -DestinationPath "C:\curl" -Force
 
       # 5. 设置 MSVC 环境
-      - name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x86
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x86
           
     - name: Compile Harbour
       shell: cmd
