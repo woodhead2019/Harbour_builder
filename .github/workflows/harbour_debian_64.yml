@@ -1,4 +1,4 @@
-name: Harbour for Debian 64-bits (deb package)
+name: Harbour for Debian 64-bits
 
 on:
   workflow_dispatch:
@@ -18,10 +18,10 @@ jobs:
       # 1. 检出代码
       # -------------------------------------------------
       - name: Checkout mod_harbour repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Checkout harbour/core repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: harbour/core
           path: harbour
@@ -116,7 +116,7 @@ jobs:
       - name: Upload Debian package & raw files
         env:
           TIME: "${{ steps.current-time.outputs.formattedTime }}"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: harbour_debian_64_${{ env.TIME }}
           path: |
