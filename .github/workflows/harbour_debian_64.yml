@@ -29,18 +29,18 @@ jobs:
           sudo apt update
           sudo apt install -y \
             build-essential \
-            libcurl4-openssl-dev \
+            libcurl4-opensdev \
             libssl-dev \
             libpcre3-dev \
             checkinstall \
             git
 
-          # 兼容老 curl 头文件路径
+          # 兼容 curl 头文件
           sudo mkdir -p /usr/include/curl
           sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 3. 设置构建元数据（日期 + 版本）
+      # 3. 设置版本信息
       # -------------------------------------------------
       - name: Set build metadata
         run: |
@@ -51,7 +51,6 @@ jobs:
 
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
       # -------------------------------------------------
       # 4. 编译 Harbour
@@ -65,20 +64,34 @@ jobs:
           make -j$(nproc)
 
       # -------------------------------------------------
-      # 5. 生成 .deb 包（checkinstall + make install）
+      # 5. 安装到 DESTDIR（关键！）
       # -------------------------------------------------
-      - name: Build Debian package with checkinstall
+      - name: Install to DESTDIR
         run: |
           cd harbour
-
-          # 清理并准备 DESTDIR
           DESTDIR="$(pwd)/../debian-root"
           rm -rf "$DESTDIR"
           mkdir -p "$DESTDIR"
 
-          # 使用 checkinstall 监控 make install
-          sudo checkinstall -D \
-            --install=yes \
+          # 关键：手动执行 make install 到 DESTDIR
+          make install DESTDIR="$DESTDIR"
+
+      # -------------------------------------------------
+      # 6. 使用 checkinstall 打包 DESTDIR（不执行 install）
+      # -------------------------------------------------
+      - name: Build Debian package with checkinstall
+        run: |
+          cd debian-root
+
+          # 创建一个空脚本，checkinstall 必须有命令
+          cat > fake-install.sh <<'EOF'
+          #!/bin/sh
+          echo "Files already installed to DESTDIR. Skipping installation."
+          EOF
+          chmod +x fake-install.sh
+
+          # checkinstall 仅打包，不执行安装
+          sudo checkinstall -D --install=no \
             --fstrans=no \
             --pkgname=harbour \
             --pkgversion="${{ env.PKG_VERSION }}" \
@@ -88,13 +101,13 @@ jobs:
             --requires="libc6, libcurl4, libssl3, libpcre3" \
             --nodoc \
             --pak \
-            make install DESTDIR="$DESTDIR"
+            ./fake-install.sh
 
           # 移动 .deb 到 workspace
           sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
 
       # -------------------------------------------------
-      # 6. 准备 raw output 目录（用于开发者）
+      # 7. 准备 raw output（开发者用）
       # -------------------------------------------------
       - name: Create raw output directory
         run: |
@@ -104,7 +117,7 @@ jobs:
           cp -r harbour/include/* output/include/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 7. 上传 .deb 包（用户一键安装）
+      # 8. 上传 .deb（用户）
       # -------------------------------------------------
       - name: Upload Debian package (.deb only)
         uses: actions/upload-artifact@v4
@@ -114,7 +127,7 @@ jobs:
             *.deb
 
       # -------------------------------------------------
-      # 8. 上传原始编译文件（开发者调试用）
+      # 9. 上传原始文件（开发者）
       # -------------------------------------------------
       - name: Upload raw compiled files
         uses: actions/upload-artifact@v4
