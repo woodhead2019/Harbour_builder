@@ -1,0 +1,124 @@
+name: Harbour for Debian 64-bits (deb package)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # 只允许仓库拥有者手动触发
+    if: github.actor == github.event.repository.owner.login
+
+    env:
+      # 包的版本号（这里用日期+commit 短哈希，保持唯一）
+      PKG_VERSION: "1.0.$(date +%Y%m%d).${{ github.sha }}"
+
+    steps:
+      # -------------------------------------------------
+      # 1. 检出代码
+      # -------------------------------------------------
+      - name: Checkout mod_harbour repo
+        uses: actions/checkout@v2
+
+      - name: Checkout harbour/core repo
+        uses: actions/checkout@v2
+        with:
+          repository: harbour/core
+          path: harbour
+
+      # -------------------------------------------------
+      # 2. 安装编译 + 打包依赖
+      # -------------------------------------------------
+      - name: Install build & packaging dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libpcre3-dev \
+            checkinstall \
+            git
+
+          # 为 curl 头文件创建兼容目录（原脚本的 hack）
+          sudo mkdir -p /usr/include/curl
+          sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
+
+      # -------------------------------------------------
+      # 3. 编译 Harbour
+      # -------------------------------------------------
+      - name: Compile harbour
+        run: |
+          cd harbour
+          export HB_USER_CFLAGS="-fPIC"
+          export HB_BUILD_CONTRIBS=""
+          export HB_WITH_PCRE=local
+          make -j$(nproc)
+
+      # -------------------------------------------------
+      # 4. 准备安装目录（DESTDIR）
+      # -------------------------------------------------
+      - name: Prepare installation tree
+        run: |
+          DESTDIR="$(pwd)/debian-root"
+          mkdir -p "$DESTDIR/usr/local"
+
+          # 模拟 make install 的目标结构
+          mkdir -p "$DESTDIR/usr/local/bin"
+          cp harbour/bin/linux/gcc/* "$DESTDIR/usr/local/bin/"
+
+          mkdir -p "$DESTDIR/usr/local/lib"
+          cp harbour/lib/linux/gcc/*.a "$DESTDIR/usr/local/lib/"
+
+          mkdir -p "$DESTDIR/usr/local/include/harbour"
+          cp -r harbour/include/* "$DESTDIR/usr/local/include/harbour/"
+
+      # -------------------------------------------------
+      # 5. 生成 .deb 包（checkinstall）
+      # -------------------------------------------------
+      - name: Build Debian package with checkinstall
+        run: |
+          cd debian-root
+
+          # checkinstall 需要一个“安装命令”。我们写一个简单的脚本
+          cat > install.sh <<'EOF'
+          #!/bin/sh
+          cp -r usr/* /usr/
+          EOF
+          chmod +x install.sh
+
+          sudo checkinstall -D --install=no \
+            --pkgname=harbour \
+            --pkgversion="${{ env.PKG_VERSION }}" \
+            --pkgrelease=1 \
+            --pkglicense=GPL \
+            --maintainer="GitHub Actions <actions@github.com>" \
+            --requires="libc6, libcurl4, libssl3, libpcre3" \
+            --nodoc \
+            --pak \
+            ./install.sh
+
+          # 把生成的 .deb 移到工作区根目录，方便后面上传
+          sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
+
+      # -------------------------------------------------
+      # 6. 获取时间（用于 artifact 名称）
+      # -------------------------------------------------
+      - name: Get current time
+        uses: srfrnk/current-time@master
+        id: current-time
+        with:
+          format: YYYY_MM_DD
+
+      # -------------------------------------------------
+      # 7. 上传 .deb + 原始文件（可选）
+      # -------------------------------------------------
+      - name: Upload Debian package & raw files
+        env:
+          TIME: "${{ steps.current-time.outputs.formattedTime }}"
+        uses: actions/upload-artifact@v2
+        with:
+          name: harbour_debian_64_${{ env.TIME }}
+          path: |
+            ${{ github.workspace }}/*.deb
+            ${{ github.workspace }}/output/**
