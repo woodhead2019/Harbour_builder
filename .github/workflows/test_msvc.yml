@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: harbour/core
-          ref: v3.4.0                 # <-- 替换为你想固定的版本
+          ref: master                # <-- 替换为你想固定的版本
           path: harbour
 
       # ------------------------------------------------------------------
