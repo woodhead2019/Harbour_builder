@@ -9,6 +9,9 @@ jobs:
     if: github.actor == github.event.repository.owner.login
 
     steps:
+      # -------------------------------------------------
+      # 1. 检出代码
+      # -------------------------------------------------
       - name: Checkout mod_harbour repo
         uses: actions/checkout@v4
 
@@ -18,7 +21,10 @@ jobs:
           repository: harbour/core
           path: harbour
 
-      - name: Install dependencies
+      # -------------------------------------------------
+      # 2. 安装依赖
+      # -------------------------------------------------
+      - name: Install build & packaging dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -31,6 +37,9 @@ jobs:
           sudo mkdir -p /usr/include/curl
           sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
 
+      # -------------------------------------------------
+      # 3. 设置元数据（日期 + 版本 + Installed‑Size）
+      # -------------------------------------------------
       - name: Set build metadata
         run: |
           BUILD_DATE=$(date +'%Y_%m_%d')
@@ -41,6 +50,9 @@ jobs:
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
+      # -------------------------------------------------
+      # 4. 编译 Harbour
+      # -------------------------------------------------
       - name: Compile harbour
         run: |
           cd harbour
@@ -49,6 +61,9 @@ jobs:
           export HB_WITH_PCRE=local
           make -j$(nproc)
 
+      # -------------------------------------------------
+      # 5. 安装到 DESTDIR
+      # -------------------------------------------------
       - name: Install to DESTDIR
         run: |
           cd harbour
@@ -57,10 +72,23 @@ jobs:
           mkdir -p "$DESTDIR"
           make install DESTDIR="$DESTDIR"
 
+      # -------------------------------------------------
+      # 6. 计算 Installed‑Size 并写入环境变量
+      # -------------------------------------------------
+      - name: Calculate installed size
+        run: |
+          INSTALLED_KB=$(du -sk debian-root/usr | cut -f1)
+          echo "INSTALLED_KB=$INSTALLED_KB" >> $GITHUB_ENV
+
+      # -------------------------------------------------
+      # 7. 用 dpkg-deb 打包（不再使用 checkinstall）
+      # -------------------------------------------------
       - name: Build Debian package with dpkg-deb
         run: |
+          # 创建 DEBIAN 目录
           mkdir -p debian-root/DEBIAN
 
+          # 生成 control 文件（使用环境变量）
           cat > debian-root/DEBIAN/control <<EOF
 Package: harbour
 Version: ${{ env.PKG_VERSION }}
@@ -68,21 +96,27 @@ Section: devel
 Priority: optional
 Architecture: amd64
 Essential: no
-Installed-Size: $(du -sk debian-root/usr | cut -f1)
+Installed-Size: ${{ env.INSTALLED_KB }}
 Maintainer: GitHub Actions
 Depends: libc6, libcurl4, libssl3, libpcre3
 Description: Harbour compiler and runtime for Linux
  Harbour is a multi-platform compiler compatible with Clipper.
 EOF
 
+          # 设置正确的文件权限
           find debian-root/usr -type d -exec chmod 755 {} \;
           find debian-root/usr -type f -exec chmod 644 {} \;
           find debian-root/usr/bin -type f -exec chmod 755 {} \;
 
+          # 生成 .deb
           dpkg-deb --build --root-owner-group debian-root
 
+          # 移动到 workspace
           mv debian-root.deb "${{ github.workspace }}/harbour_${{ env.PKG_VERSION }}-1_amd64.deb"
 
+      # -------------------------------------------------
+      # 8. 准备 raw output（给开发者）
+      # -------------------------------------------------
       - name: Create raw output directory
         run: |
           mkdir -p output/bin output/lib output/include
@@ -90,6 +124,9 @@ EOF
           cp harbour/lib/linux/gcc/*.a output/lib/ 2>/dev/null || true
           cp -r harbour/include/* output/include/ 2>/dev/null || true
 
+      # -------------------------------------------------
+      # 9. 上传 .deb（用户一键安装）
+      # -------------------------------------------------
       - name: Upload Debian package (.deb only)
         uses: actions/upload-artifact@v4
         with:
@@ -97,6 +134,9 @@ EOF
           path: |
             harbour_*.deb
 
+      # -------------------------------------------------
+      # 10. 上传原始编译文件（开发者调试用）
+      # -------------------------------------------------
       - name: Upload raw compiled files
         uses: actions/upload-artifact@v4
         with:
