@@ -1,0 +1,147 @@
+name: Harbour for Windows 32 using MSVC
+
+on:
+  workflow_dispatch: {}
+
+# ----------------------------------------------------------------------
+# 1. 构建矩阵（以后可轻松扩展到 x64）
+# ----------------------------------------------------------------------
+jobs:
+  build:
+    runs-on: windows-latest
+    # 只允许仓库拥有者手动触发（保持原有安全限制）
+    if: github.actor == github.event.repository.owner.login
+
+    strategy:
+      matrix:
+        arch: [x86]          # 可改为 [x86, x64] 并在后续步骤使用
+        include:
+          - arch: x86
+            vcvars: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat"
+            hb_arch: win\\msvc
+
+    env:
+      # 统一变量，方便以后改动
+      OPENSSL_VERSION: 1.1.1w
+      CURL_VERSION: 8.10.1
+      HB_BUILD_MODE: c
+      HB_USER_PRGFLAGS: -l-
+      HB_BUILD_CONTRIBS: ""
+      HB_COMPILER: msvc
+      HB_STATIC_OPENSSL: yes
+      HB_STATIC_CURL: yes
+
+    steps:
+      # ------------------------------------------------------------------
+      # 1. 检出本仓库
+      # ------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4   # 升级到最新版
+
+      # ------------------------------------------------------------------
+      # 2. 检出 harbour/core（固定到最新 release tag，防止漂移）
+      # ------------------------------------------------------------------
+      - name: Checkout harbour/core
+        uses: actions/checkout@v4
+        with:
+          repository: harbour/core
+          ref: v3.4.0                 # <-- 替换为你想固定的版本
+          path: harbour
+
+      # ------------------------------------------------------------------
+      # 3. 缓存 OpenSSL / curl（大幅提升二次运行速度）
+      # ------------------------------------------------------------------
+      - name: Cache OpenSSL
+        id: cache-openssl
+        uses: actions/cache@v4
+        with:
+          path: C:\OpenSSL
+          key: openssl-${{ env.OPENSSL_VERSION }}-win32
+
+      - name: Cache curl
+        id: cache-curl
+        uses: actions/cache@v4
+        with:
+          path: C:\curl
+          key: curl-${{ env.CURL_VERSION }}-win32
+
+      # ------------------------------------------------------------------
+      # 4. 下载并解压 OpenSSL（仅在缓存未命中时执行）
+      # ------------------------------------------------------------------
+      - name: Download & extract OpenSSL
+        if: steps.cache-openssl.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "https://www.openssl.org/source/old/1.1.1/openssl-${{ env.OPENSSL_VERSION }}.tar.gz"
+          $archive = "$env:TEMP\openssl.tar.gz"
+          Invoke-WebRequest -Uri $url -OutFile $archive
+          tar -xzf $archive -C $env:TEMP
+          Move-Item "$env:TEMP\openssl-${{ env.OPENSSL_VERSION }}" C:\OpenSSL
+
+      # ------------------------------------------------------------------
+      # 5. 下载并解压 curl（同上）
+      # ------------------------------------------------------------------
+      - name: Download & extract curl
+        if: steps.cache-curl.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "https://curl.se/download/curl-${{ env.CURL_VERSION }}.zip"
+          $archive = "$env:TEMP\curl.zip"
+          Invoke-WebRequest -Uri $url -OutFile $archive
+          Expand-Archive -Path $archive -DestinationPath C:\curl -Force
+
+      # ------------------------------------------------------------------
+      # 6. 设置 Visual Studio 环境（使用官方 action，避免硬编码路径）
+      # ------------------------------------------------------------------
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
+      # ------------------------------------------------------------------
+      # 7. 编译 Harbour
+      # ------------------------------------------------------------------
+      - name: Build Harbour
+        shell: cmd
+        run: |
+          cd harbour
+          set HB_WITH_OPENSSL=C:\OpenSSL\include
+          set HB_WITH_CURL=C:\curl\include
+          win-make.exe
+        env:
+          HB_BUILD_MODE: ${{ env.HB_BUILD_MODE }}
+          HB_USER_PRGFLAGS: ${{ env.HB_USER_PRGFLAGS }}
+          HB_BUILD_CONTRIBS: ${{ env.HB_BUILD_CONTRIBS }}
+          HB_STATIC_OPENSSL: ${{ env.HB_STATIC_OPENSSL }}
+          HB_STATIC_CURL: ${{ env.HB_STATIC_CURL }}
+          HB_COMPILER: ${{ env.HB_COMPILER }}
+
+      # ------------------------------------------------------------------
+      # 8. 收集产物
+      # ------------------------------------------------------------------
+      - name: Collect artifacts
+        shell: cmd
+        run: |
+          mkdir output\bin
+          copy harbour\bin\${{ matrix.hb_arch }}\*.exe output\bin\
+          mkdir output\lib
+          copy harbour\lib\${{ matrix.hb_arch }}\*.lib output\lib\
+          xcopy /E /I harbour\include output\include
+
+      # ------------------------------------------------------------------
+      # 9. 生成时间戳（使用内置的 github 变量，避免第三方 action）
+      # ------------------------------------------------------------------
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "date=$(Get-Date -Format yyyy_MM_dd)" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      # ------------------------------------------------------------------
+      # 10. 上传 artifact
+      # ------------------------------------------------------------------
+      - name: Upload Harbour artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: harbour_win32_msvc_${{ steps.timestamp.outputs.date }}
+          path: output/
+          retention-days: 30
