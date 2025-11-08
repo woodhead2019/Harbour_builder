@@ -81,7 +81,7 @@ jobs:
           echo "INSTALLED_KB=$INSTALLED_KB" >> $GITHUB_ENV
 
       # -------------------------------------------------
-      # 7. 用 dpkg-deb 打包（关键：用 env 传递变量）
+      # 7. 用 dpkg-deb 打包（关键：env + $GITHUB_WORKSPACE）
       # -------------------------------------------------
       - name: Build Debian package with dpkg-deb
         env:
@@ -110,7 +110,8 @@ EOF
 
           dpkg-deb --build --root-owner-group debian-root
 
-          mv debian-root.deb "${{ github.workspace }}/harbour_${{ env.PKG_VERSION }}-1_amd64.deb"
+          # 正确使用 $GITHUB_WORKSPACE
+          mv debian-root.deb "$GITHUB_WORKSPACE/harbour_${PKG_VERSION}-1_amd64.deb"
 
       # -------------------------------------------------
       # 8. 准备 raw output
