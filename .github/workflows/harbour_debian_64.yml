@@ -1,4 +1,4 @@
-name: Harbour for Debian 64-bits
+name: Harbour for Debian 64-bits (deb package)
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
           path: harbour
 
       # -------------------------------------------------
-      # 2. 安装依赖（编译 + 打包）
+      # 2. 安装依赖
       # -------------------------------------------------
       - name: Install build & packaging dependencies
         run: |
@@ -35,12 +35,12 @@ jobs:
             checkinstall \
             git
 
-          # 兼容老 curl 头文件路径（原脚本 hack）
+          # 兼容老 curl 头文件路径
           sudo mkdir -p /usr/include/curl
           sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 3. 设置构建日期和版本号（使用 GITHUB_ENV）
+      # 3. 设置构建元数据（日期 + 版本）
       # -------------------------------------------------
       - name: Set build metadata
         run: |
@@ -65,33 +65,21 @@ jobs:
           make -j$(nproc)
 
       # -------------------------------------------------
-      # 5. 准备安装目录（DESTDIR）
-      # -------------------------------------------------
-      - name: Prepare installation tree
-        run: |
-          DESTDIR="$(pwd)/debian-root"
-          mkdir -p "$DESTDIR/usr/local/bin"
-          mkdir -p "$DESTDIR/usr/local/lib"
-          mkdir -p "$DESTDIR/usr/local/include/harbour"
-
-          cp harbour/bin/linux/gcc/* "$DESTDIR/usr/local/bin/"
-          cp harbour/lib/linux/gcc/*.a "$DESTDIR/usr/local/lib/"
-          cp -r harbour/include/* "$DESTDIR/usr/local/include/harbour/"
-
-      # -------------------------------------------------
-      # 6. 生成 .deb 包（checkinstall）
+      # 5. 生成 .deb 包（checkinstall + make install）
       # -------------------------------------------------
       - name: Build Debian package with checkinstall
         run: |
-          cd debian-root
+          cd harbour
 
-          cat > install.sh <<'EOF'
-          #!/bin/sh
-          cp -r usr/* /
-          EOF
-          chmod +x install.sh
+          # 清理并准备 DESTDIR
+          DESTDIR="$(pwd)/../debian-root"
+          rm -rf "$DESTDIR"
+          mkdir -p "$DESTDIR"
 
-          sudo checkinstall -D --install=no \
+          # 使用 checkinstall 监控 make install
+          sudo checkinstall -D \
+            --install=yes \
+            --fstrans=no \
             --pkgname=harbour \
             --pkgversion="${{ env.PKG_VERSION }}" \
             --pkgrelease=1 \
@@ -100,15 +88,15 @@ jobs:
             --requires="libc6, libcurl4, libssl3, libpcre3" \
             --nodoc \
             --pak \
-            ./install.sh
+            make install DESTDIR="$DESTDIR"
 
-          # 移动 .deb 到 workspace 根目录
+          # 移动 .deb 到 workspace
           sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
 
       # -------------------------------------------------
-      # 7. 创建 output 目录（保留原始文件，可选）
+      # 6. 准备 raw output 目录（用于开发者）
       # -------------------------------------------------
-      - name: Create output folders (raw files)
+      - name: Create raw output directory
         run: |
           mkdir -p output/bin output/lib output/include
           cp harbour/bin/linux/gcc/* output/bin/ 2>/dev/null || true
@@ -116,12 +104,20 @@ jobs:
           cp -r harbour/include/* output/include/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 8. 上传 .deb + 原始文件
+      # 7. 上传 .deb 包（用户一键安装）
       # -------------------------------------------------
-      - name: Upload Debian package & raw files
+      - name: Upload Debian package (.deb only)
         uses: actions/upload-artifact@v4
         with:
-          name: harbour_debian_64_${{ env.BUILD_DATE }}
+          name: harbour_debian_64_${{ env.BUILD_DATE }}_deb
           path: |
             *.deb
-            output/
+
+      # -------------------------------------------------
+      # 8. 上传原始编译文件（开发者调试用）
+      # -------------------------------------------------
+      - name: Upload raw compiled files
+        uses: actions/upload-artifact@v4
+        with:
+          name: harbour_debian_64_${{ env.BUILD_DATE }}_raw
+          path: output/
