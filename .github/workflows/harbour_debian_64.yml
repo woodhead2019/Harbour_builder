@@ -9,6 +9,9 @@ jobs:
     if: github.actor == github.event.repository.owner.login
 
     steps:
+      - name: Checkout mod_harbour repo
+        uses: actions/checkout@v4
+
       - name: Checkout harbour/core repo
         uses: actions/checkout@v4
         with:
