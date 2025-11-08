@@ -16,8 +16,6 @@ jobs:
             hb_arch: win\\msvc
 
     env:
-      OPENSSL_VERSION: 1.1.1w          # OpenSSL 1.1.1 系列最终版
-      CURL_VERSION: 8.10.1             # curl 最新稳定版
       HB_BUILD_MODE: c
       HB_USER_PRGFLAGS: -l-
       HB_BUILD_CONTRIBS: ""
@@ -27,102 +25,89 @@ jobs:
 
     steps:
       # --------------------------------------------------------------
-      # 1. 检出本仓库
+      # 1. 检出本仓库（含 .github/temp/ 下的两个 zip）
       # --------------------------------------------------------------
-      - name: Checkout repository
+      - name: Checkout repository (with local deps)
         uses: actions/checkout@v4
+        with:
+          path: main
 
       # --------------------------------------------------------------
-      # 2. 检出 harbour/core（master 分支，稳定）
+      # 2. 检出 harbour/core（master 分支）
       # --------------------------------------------------------------
       - name: Checkout harbour/core
         uses: actions/checkout@v4
         with:
           repository: harbour/core
           ref: master
-          path: harbour
+          path: main/harbour
 
       # --------------------------------------------------------------
-      # 3. 缓存 OpenSSL（源码头文件 + 预编译库）
+      # 3. 缓存本地 OpenSSL 解压结果
       # --------------------------------------------------------------
-      - name: Cache OpenSSL
+      - name: Cache local OpenSSL
         id: cache-openssl
         uses: actions/cache@v4
         with:
           path: C:\OpenSSL
-          key: openssl-${{ env.OPENSSL_VERSION }}-win32-headers-libs-${{ runner.os }}
+          key: local-openssl-win32-${{ hashFiles('main/.github/temp/OpenSSL-Win32.zip') }}
 
       # --------------------------------------------------------------
-      # 4. 安装 OpenSSL（含头文件 + .lib）
+      # 4. 解压本地 OpenSSL-Win32.zip
       # --------------------------------------------------------------
-      - name: Install OpenSSL with headers and libs
+      - name: Extract local OpenSSL
         if: steps.cache-openssl.outputs.cache-hit != 'true'
         shell: pwsh
-        env:
-          VER: ${{ env.OPENSSL_VERSION }}
         run: |
+          $zip = "main\.github\temp\OpenSSL-Win32.zip"
           $dest = "C:\OpenSSL"
+          if (-not (Test-Path $zip)) {
+            Write-Error "OpenSSL-Win32.zip not found at $zip"
+            exit 1
+          }
           New-Item -ItemType Directory -Path $dest -Force
+          Expand-Archive -Path $zip -DestinationPath $dest -Force
 
-          # --- 1. 下载源码（提供 include/openssl/）
-          $srcUrl = "https://github.com/openssl/openssl/archive/openssl-$VER.tar.gz"
-          $srcTar = "$env:TEMP\openssl-src.tar.gz"
-          Write-Host "Downloading OpenSSL source from $srcUrl"
-          Invoke-WebRequest -Uri $srcUrl -OutFile $srcTar -UseBasicParsing
-          tar -xzf $srcTar -C $env:TEMP
-          $srcDir = Get-ChildItem "$env:TEMP\openssl-openssl-*" | Select-Object -First 1
-          Copy-Item "$srcDir.FullName\include\openssl" "$dest\include\openssl" -Recurse -Force
-
-          # --- 2. 下载官方预编译库（libcrypto.lib, libssl.lib）
-          $binUrl = "https://github.com/openssl/openssl/releases/download/openssl-$VER/openssl-$VER-win32.zip"
-          $binZip = "$env:TEMP\openssl-bin.zip"
-          Write-Host "Downloading OpenSSL binaries from $binUrl"
-          Invoke-WebRequest -Uri $binUrl -OutFile $binZip -UseBasicParsing
-          Expand-Archive -Path $binZip -DestinationPath $dest -Force
-
-          # --- 3. 确保 opensslconf.h 存在（Win32 配置）
-          $confSrc = "$dest\include\openssl\opensslconf-win32.h"
-          $confDst = "$dest\include\openssl\opensslconf.h"
-          if (-not (Test-Path $confDst) -and (Test-Path $confSrc)) {
-            Copy-Item $confSrc $confDst -Force
+          # 修复 opensslconf.h（复制 win32 配置）
+          $src = "$dest\include\openssl\opensslconf-win32.h"
+          $dst = "$dest\include\openssl\opensslconf.h"
+          if ((Test-Path $src) -and (-not (Test-Path $dst))) {
+            Copy-Item $src $dst -Force
+            Write-Host "Created opensslconf.h from win32 config"
           }
 
-          # --- 4. 清理
-          Remove-Item $srcTar, $binZip -Force
-          Remove-Item "$env:TEMP\openssl-*" -Recurse -Force
-
       # --------------------------------------------------------------
-      # 5. 缓存 curl
+      # 5. 缓存本地 curl 解压结果
       # --------------------------------------------------------------
-      - name: Cache curl
+      - name: Cache local curl
         id: cache-curl
         uses: actions/cache@v4
         with:
           path: C:\curl
-          key: curl-${{ env.CURL_VERSION }}-win32-${{ runner.os }}
+          key: local-curl-7.54.0-win32-${{ hashFiles('main/.github/temp/curl-7.54.0-win32-mingw.zip') }}
 
       # --------------------------------------------------------------
-      # 6. 安装 curl（官方 Win32 包）
+      # 6. 解压本地 curl-7.54.0-win32-mingw.zip
       # --------------------------------------------------------------
-      - name: Install curl
+      - name: Extract local curl
         if: steps.cache-curl.outputs.cache-hit != 'true'
         shell: pwsh
-        env:
-          VER: ${{ env.CURL_VERSION }}
         run: |
-          $url = "https://curl.se/windows/dl-$VER/curl-$VER-win32-mingw.zip"
-          $zip = "$env:TEMP\curl.zip"
+          $zip = "main\.github\temp\curl-7.54.0-win32-mingw.zip"
           $dest = "C:\curl"
-          Write-Host "Downloading curl from $url"
-          Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
+          if (-not (Test-Path $zip)) {
+            Write-Error "curl-7.54.0-win32-mingw.zip not found at $zip"
+            exit 1
+          }
+          New-Item -ItemType Directory -Path $dest -Force
           Expand-Archive -Path $zip -DestinationPath $dest -Force
-          Remove-Item $zip
 
-          # 移动内部文件夹
+          # 移动内部文件夹（如 curl-7.54.0-win32-mingw/ → C:\curl）
           $inner = Get-ChildItem -Path $dest -Directory | Select-Object -First 1
           if ($inner) {
             Get-ChildItem -Path $inner.FullName -Recurse | Move-Item -Destination $dest -Force
-            Remove-Item $inner.FullName -Recurse -Force
+            Get-ChildItem -Path $inner.FullName | Remove-Item -Force
+            Remove-Item $inner.FullName -Force
           }
 
       # --------------------------------------------------------------
@@ -139,10 +124,10 @@ jobs:
       - name: Build Harbour
         shell: cmd
         run: |
-          cd harbour
+          cd main\harbour
           set HB_WITH_OPENSSL=C:\OpenSSL\include
           set HB_WITH_CURL=C:\curl\include
-          set CFLAGS=/DOPENSSL_SYS_WIN32 /DWIN32_LEAN_AND_MEAN /I"C:\OpenSSL\include"
+          set CFLAGS=/DOPENSSL_SYS_WIN32 /DWIN32_LEAN_AND_MEAN /I"C:\OpenSSL\include" /I"C:\curl\include"
           win-make.exe
         env:
           HB_BUILD_MODE: ${{ env.HB_BUILD_MODE }}
@@ -159,10 +144,10 @@ jobs:
         shell: cmd
         run: |
           mkdir output\bin
-          copy "harbour\bin\${{ matrix.hb_arch }}\*.exe" output\bin\
+          copy "main\harbour\bin\${{ matrix.hb_arch }}\*.exe" output\bin\
           mkdir output\lib
-          copy "harbour\lib\${{ matrix.hb_arch }}\*.lib" output\lib\
-          xcopy /E /I harbour\include output\include
+          copy "main\harbour\lib\${{ matrix.hb_arch }}\*.lib" output\lib\
+          xcopy /E /I main\harbour\include output\include
 
       # --------------------------------------------------------------
       # 10. 生成时间戳
