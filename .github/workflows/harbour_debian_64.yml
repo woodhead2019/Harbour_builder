@@ -6,12 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # 只允许仓库拥有者手动触发
     if: github.actor == github.event.repository.owner.login
-
-    env:
-      # 包的版本号（这里用日期+commit 短哈希，保持唯一）
-      PKG_VERSION: "1.0.$(date +%Y%m%d).${{ github.sha }}"
 
     steps:
       # -------------------------------------------------
@@ -27,7 +22,7 @@ jobs:
           path: harbour
 
       # -------------------------------------------------
-      # 2. 安装编译 + 打包依赖
+      # 2. 安装依赖（编译 + 打包）
       # -------------------------------------------------
       - name: Install build & packaging dependencies
         run: |
@@ -40,12 +35,26 @@ jobs:
             checkinstall \
             git
 
-          # 为 curl 头文件创建兼容目录（原脚本的 hack）
+          # 兼容老 curl 头文件路径（原脚本 hack）
           sudo mkdir -p /usr/include/curl
           sudo cp -r /usr/include/x86_64-linux-gnu/curl/* /usr/include/curl/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 3. 编译 Harbour
+      # 3. 设置构建日期和版本号（使用 GITHUB_ENV）
+      # -------------------------------------------------
+      - name: Set build metadata
+        run: |
+          BUILD_DATE=$(date +'%Y_%m_%d')
+          SHORT_SHA=${{ github.sha }}
+          SHORT_SHA=${SHORT_SHA:0:7}
+          PKG_VERSION="1.0.$(date +'%Y%m%d').${SHORT_SHA}"
+
+          echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+          echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
+      # -------------------------------------------------
+      # 4. 编译 Harbour
       # -------------------------------------------------
       - name: Compile harbour
         run: |
@@ -56,34 +65,29 @@ jobs:
           make -j$(nproc)
 
       # -------------------------------------------------
-      # 4. 准备安装目录（DESTDIR）
+      # 5. 准备安装目录（DESTDIR）
       # -------------------------------------------------
       - name: Prepare installation tree
         run: |
           DESTDIR="$(pwd)/debian-root"
-          mkdir -p "$DESTDIR/usr/local"
-
-          # 模拟 make install 的目标结构
           mkdir -p "$DESTDIR/usr/local/bin"
-          cp harbour/bin/linux/gcc/* "$DESTDIR/usr/local/bin/"
-
           mkdir -p "$DESTDIR/usr/local/lib"
-          cp harbour/lib/linux/gcc/*.a "$DESTDIR/usr/local/lib/"
-
           mkdir -p "$DESTDIR/usr/local/include/harbour"
+
+          cp harbour/bin/linux/gcc/* "$DESTDIR/usr/local/bin/"
+          cp harbour/lib/linux/gcc/*.a "$DESTDIR/usr/local/lib/"
           cp -r harbour/include/* "$DESTDIR/usr/local/include/harbour/"
 
       # -------------------------------------------------
-      # 5. 生成 .deb 包（checkinstall）
+      # 6. 生成 .deb 包（checkinstall）
       # -------------------------------------------------
       - name: Build Debian package with checkinstall
         run: |
           cd debian-root
 
-          # checkinstall 需要一个“安装命令”。我们写一个简单的脚本
           cat > install.sh <<'EOF'
           #!/bin/sh
-          cp -r usr/* /usr/
+          cp -r usr/* /
           EOF
           chmod +x install.sh
 
@@ -92,33 +96,32 @@ jobs:
             --pkgversion="${{ env.PKG_VERSION }}" \
             --pkgrelease=1 \
             --pkglicense=GPL \
-            --maintainer="GitHub Actions <actions@github.com>" \
+            --maintainer="GitHub Actions <noreply@github.com>" \
             --requires="libc6, libcurl4, libssl3, libpcre3" \
             --nodoc \
             --pak \
             ./install.sh
 
-          # 把生成的 .deb 移到工作区根目录，方便后面上传
+          # 移动 .deb 到 workspace 根目录
           sudo mv harbour_*_amd64.deb "${{ github.workspace }}/"
 
       # -------------------------------------------------
-      # 6. 获取时间（用于 artifact 名称）
+      # 7. 创建 output 目录（保留原始文件，可选）
       # -------------------------------------------------
-      - name: Get current time
-        uses: srfrnk/current-time@master
-        id: current-time
-        with:
-          format: YYYY_MM_DD
+      - name: Create output folders (raw files)
+        run: |
+          mkdir -p output/bin output/lib output/include
+          cp harbour/bin/linux/gcc/* output/bin/ 2>/dev/null || true
+          cp harbour/lib/linux/gcc/*.a output/lib/ 2>/dev/null || true
+          cp -r harbour/include/* output/include/ 2>/dev/null || true
 
       # -------------------------------------------------
-      # 7. 上传 .deb + 原始文件（可选）
+      # 8. 上传 .deb + 原始文件
       # -------------------------------------------------
       - name: Upload Debian package & raw files
-        env:
-          TIME: "${{ steps.current-time.outputs.formattedTime }}"
         uses: actions/upload-artifact@v4
         with:
-          name: harbour_debian_64_${{ env.TIME }}
+          name: harbour_debian_64_${{ env.BUILD_DATE }}
           path: |
-            ${{ github.workspace }}/*.deb
-            ${{ github.workspace }}/output/**
+            *.deb
+            output/
