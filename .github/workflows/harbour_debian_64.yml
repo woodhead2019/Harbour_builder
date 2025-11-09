@@ -28,6 +28,8 @@ jobs:
             libpcre3-dev \
             libcups2-dev \
             libsqlite3-dev \
+            libgpm-dev \
+            libx11-dev \
             git
 
           sudo mkdir -p /usr/include/curl
@@ -98,8 +100,6 @@ jobs:
                         " Harbour is a multi-platform compiler compatible with Clipper." \
                         > debian-root/DEBIAN/control
 
-          pwd
-          ls 
           find debian-root/usr -type d -exec chmod 755 {} \;
           find debian-root/usr -type f -exec chmod 644 {} \;
           find debian-root/usr/local/bin -type f -exec chmod 755 {} \;
