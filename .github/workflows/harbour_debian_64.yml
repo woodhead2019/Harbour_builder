@@ -52,7 +52,6 @@ jobs:
       - name: Install to DESTDIR (manual copy)
         run: |
           DESTDIR="$(pwd)/debian-root"
-          pwd
           rm -rf "$DESTDIR"
           mkdir -p "$DESTDIR/usr/local/bin"
           mkdir -p "$DESTDIR/usr/local/lib"
@@ -71,14 +70,14 @@ jobs:
           # 复制文档
           cp harbour/doc/*.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
           cp harbour/ChangeLog.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
-          tree -L3
+          ls
 
       - name: Calculate installed size
         run: |
           INSTALLED_KB=$(du -sk debian-root/usr | cut -f1)
           echo "INSTALLED_KB=$INSTALLED_KB" >> $GITHUB_ENV
           pwd
-          tree -L3
+          ls
 
       - name: Build Debian package with dpkg-deb
         env:
@@ -87,7 +86,7 @@ jobs:
         run: |
           mkdir -p debian-root/DEBIAN
           pwd
-          tree -L3
+          ls
 
           printf '%s\n' "Package: harbour" \
                         "Version: $PKG_VERSION" \
