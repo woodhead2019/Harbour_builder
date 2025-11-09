@@ -70,14 +70,13 @@ jobs:
           # 复制文档
           cp harbour/doc/*.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
           cp harbour/ChangeLog.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
-          ls
+          ls harbour/bin/linux/gcc
+          ls "$DESTDIR/usr/local/bin/"
 
       - name: Calculate installed size
         run: |
           INSTALLED_KB=$(du -sk debian-root/usr | cut -f1)
           echo "INSTALLED_KB=$INSTALLED_KB" >> $GITHUB_ENV
-          pwd
-          ls
 
       - name: Build Debian package with dpkg-deb
         env:
