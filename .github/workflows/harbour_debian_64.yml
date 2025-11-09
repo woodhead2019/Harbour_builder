@@ -70,8 +70,6 @@ jobs:
           # 复制文档
           cp harbour/doc/*.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
           cp harbour/ChangeLog.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
-          ls harbour/bin/linux/gcc
-          ls "$DESTDIR/usr/local/bin/"
 
       - name: Calculate installed size
         run: |
@@ -84,8 +82,7 @@ jobs:
           INSTALLED_KB: ${{ env.INSTALLED_KB }}
         run: |
           mkdir -p debian-root/DEBIAN
-          pwd
-          ls
+          ls debian-root
 
           printf '%s\n' "Package: harbour" \
                         "Version: $PKG_VERSION" \
@@ -100,6 +97,9 @@ jobs:
                         " Harbour is a multi-platform compiler compatible with Clipper." \
                         > debian-root/DEBIAN/control
 
+          pwd
+          ls ‘debian-root/usr/bin’
+          ls ‘debian-root/’
           find debian-root/usr -type d -exec chmod 755 {} \;
           find debian-root/usr -type f -exec chmod 644 {} \;
           find debian-root/usr/bin -type f -exec chmod 755 {} \;
