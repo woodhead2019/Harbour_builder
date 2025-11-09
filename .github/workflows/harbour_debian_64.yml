@@ -26,6 +26,7 @@ jobs:
             libcurl4-openssl-dev \
             libssl-dev \
             libpcre3-dev \
+            libcups2-dev \
             git
 
           sudo mkdir -p /usr/include/curl
@@ -82,6 +83,7 @@ jobs:
           INSTALLED_KB: ${{ env.INSTALLED_KB }}
         run: |
           mkdir -p debian-root/DEBIAN
+          pwd
           ls debian-root
 
           printf '%s\n' "Package: harbour" \
@@ -98,6 +100,7 @@ jobs:
                         > debian-root/DEBIAN/control
 
           pwd
+          tree
           ls ‘debian-root/usr/bin’
           ls ‘debian-root/’
           find debian-root/usr -type d -exec chmod 755 {} \;
