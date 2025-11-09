@@ -27,7 +27,6 @@ jobs:
             libssl-dev \
             libpcre3-dev \
             libcups2-dev \
-            libmysqlclient15-dev \
             libsqlite3-dev \
             git
 
