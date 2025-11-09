@@ -40,6 +40,7 @@ jobs:
 
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+          pwd
 
       - name: Compile harbour
         run: |
@@ -48,6 +49,8 @@ jobs:
           export HB_BUILD_CONTRIBS=""
           export HB_WITH_PCRE=local
           make -j$(nproc)
+          pwd
+          ls
 
       - name: Install to DESTDIR (manual copy)
         run: |
@@ -71,6 +74,7 @@ jobs:
           # 复制文档
           cp harbour/doc/*.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
           cp harbour/ChangeLog.txt "$DESTDIR/usr/local/share/doc/harbour/" 2>/dev/null || true
+          tree -3
 
       - name: Calculate installed size
         run: |
