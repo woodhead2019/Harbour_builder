@@ -99,7 +99,7 @@ jobs:
                         > debian-root/DEBIAN/control
 
           pwd
-          ls ‘debian-root/’
+          ls 
           find debian-root/usr -type d -exec chmod 755 {} \;
           find debian-root/usr -type f -exec chmod 644 {} \;
           find debian-root/usr/local/bin -type f -exec chmod 755 {} \;
