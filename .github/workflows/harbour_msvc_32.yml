@@ -3,17 +3,20 @@ name: Harbour for Windows 32 using MSVC
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
-    runs-on: windows-latest
-    
+    runs-on: windows-2022
+
     if: github.actor == github.event.repository.owner.login
-    
+
     steps:
-    - uses: actions/checkout@v2
-    
+    - uses: actions/checkout@v4
+
     - name: Checkout harbour/core repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
        repository: harbour/core
        path: harbour
@@ -24,12 +27,16 @@ jobs:
          Expand-Archive -LiteralPath C:\temp\OpenSSL-Win32.zip -DestinationPath C:\OpenSSL -Force
          (new-object System.Net.WebClient).DownloadFile('https://bitbucket.org/lorenzodla/mod_harbour_actions_resources/downloads/curl-7.54.0-win32-mingw.zip', 'C:\temp\curl-7.54.0-win32-mingw.zip')
          Expand-Archive -LiteralPath C:\temp\curl-7.54.0-win32-mingw.zip -DestinationPath C:\curl -Force
-         
+
+    - name: Setup MSVC environment (x86)
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x86
+
     - name: Compile Harbour
       shell: cmd
       run: |
         cd harbour
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
         set HB_BUILD_MODE=c
         set HB_USER_PRGFLAGS=-l-
         set HB_BUILD_CONTRIBS=
@@ -39,7 +46,7 @@ jobs:
         set HB_STATIC_CURL=yes
         set HB_COMPILER=msvc
         win-make.exe
-        
+
     - name: Create output folders
       shell: cmd
       run: |
@@ -48,19 +55,20 @@ jobs:
         copy harbour\bin\win\msvc\*.exe output\bin
         mkdir output\lib
         copy harbour\lib\win\msvc\*.lib output\lib
-        mkdir output\include 
+        mkdir output\include
         copy harbour\include output\include
-        
+
     - name: Get current time
-      uses: srfrnk/current-time@master
       id: current-time
-      with:
-        format: YYYY_MM_DD
- 
+      shell: pwsh
+      run: |
+        $time = Get-Date -Format "yyyy_MM_dd"
+        "formattedTime=$time" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
     - name: Upload Harbour to artifact
       env:
          TIME: "${{ steps.current-time.outputs.formattedTime }}"
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
        name: harbour_win32_msvc_${{ env.TIME }}
        path: output

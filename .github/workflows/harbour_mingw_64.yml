@@ -3,45 +3,59 @@ name: Harbour for Windows 64 using MinGW
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
-    runs-on: windows-latest
-    
+    runs-on: windows-2022
+
     if: github.actor == github.event.repository.owner.login
-    
-    steps:    
+
+    steps:
     - name: Checkout harbour/core repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
        repository: harbour/core
        path: harbour
 
     - name: Install dependencies
       run: |
-         choco install openssl
+         choco install openssl -y --no-progress
          copy-Item 'c:\Program Files\OpenSSL-Win64' -destination 'c:\OpenSSL-Win64' -recurse
-         choco install curl
+         choco install curl -y --no-progress
          (Get-Content -path harbour\contrib\hbssl\hbssl.hbp) -replace '/../inc32','' | Set-Content -path harbour\contrib\hbssl\hbssl.hbp
-         
+
+    - name: Locate curl include directory
+      shell: pwsh
+      id: curl-paths
+      run: |
+        $curlInclude = Get-ChildItem 'C:\ProgramData\chocolatey\lib\curl\tools' -Directory `
+          | Where-Object { $_.Name -like 'curl-*-win64-mingw' } `
+          | Select-Object -First 1 `
+          | ForEach-Object { Join-Path $_.FullName 'include' }
+        if (-not $curlInclude) { throw "curl include path not found under chocolatey lib" }
+        "curlInclude=$curlInclude" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
     - name: Compile Harbour
       shell: cmd
+      env:
+        CURL_INCLUDE: ${{ steps.curl-paths.outputs.curlInclude }}
       run: |
         cd harbour
         set HB_BUILD_MODE=c
         set HB_USER_PRGFLAGS=-l-
         set HB_BUILD_CONTRIBS=
         set HB_WITH_OPENSSL=c:/OpenSSL-Win64/include/
-        set HB_WITH_CURL=c:/ProgramData/chocolatey/lib/curl/tools/curl-7.70.0-win64-mingw/include/  
-        set HB_OPENSSL_STATIC=yes        
-        set HB_STATIC_OPENSSL=yes        
-        set HB_STATIC_CURL=yes    
+        set HB_WITH_CURL=%CURL_INCLUDE%
+        set HB_OPENSSL_STATIC=yes
         set HB_STATIC_OPENSSL=yes
         set HB_STATIC_CURL=yes
         set HB_COMPILER=mingw64
         SET HB_BUILD_CONTRIB_DYN=no
         SET HB_BUILD_DYN=no
         win-make.exe
-        
+
     - name: Create output folders
       shell: cmd
       run: |
@@ -50,19 +64,20 @@ jobs:
         copy harbour\bin\win\mingw64\*.exe output\bin
         mkdir output\lib
         copy harbour\lib\win\mingw64\*.a output\lib
-        mkdir output\include 
+        mkdir output\include
         copy harbour\include output\include
-        
+
     - name: Get current time
-      uses: srfrnk/current-time@master
       id: current-time
-      with:
-        format: YYYY_MM_DD
- 
+      shell: pwsh
+      run: |
+        $time = Get-Date -Format "yyyy_MM_dd"
+        "formattedTime=$time" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
     - name: Upload Harbour to artifact
       env:
          TIME: "${{ steps.current-time.outputs.formattedTime }}"
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
        name: harbour_win64_mingw_${{ env.TIME }}
        path: output
