@@ -35,6 +35,32 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'cw64mt.lib','cw64mt.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'import64.lib','import64.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
+         # Real fix for hbmk2 + bcc64 contrib builds.
+         #
+         # Symptom: 'bcc64.exe: error: cannot specify -o when generating
+         # multiple output files'.
+         #
+         # Diagnosis: hbmk2.prg's bcc64 branch emits '-output-dir <dir>' (or
+         # '-n<dir>' when cWorkDir is empty) to direct .o output. bcc64
+         # (Embarcadero clang) recognises neither flag, treats the path as a
+         # positional input, and then trips over '-o' from elsewhere.
+         #
+         # The same hbmk2 supports 'lCHD_Comp := .T.' for gcc/clang/zig,
+         # which CDs into cWorkDir before invoking the compiler so .o files
+         # land naturally in the work dir without any output-dir flag. bcc64
+         # never opts into this path.
+         #
+         # Patch: in the cWorkDir-set branch, swap the '-output-dir' AAdd
+         # for 'lCHD_Comp := .T.'. clang then puts .o files in the cwd
+         # (which is now the work dir) and the build succeeds.
+         $hbmk2 = 'harbour\utils\hbmk2\hbmk2.prg'
+         $orig  = 'AAdd( hbmk[ _HBMK_aOPTC ], "-output-dir " + FNameEscape( hbmk[ _HBMK_cWorkDir ], hbmk[ _HBMK_nCmd_Esc ], hbmk[ _HBMK_nCmd_FNF ] ) )'
+         $patch = 'lCHD_Comp := .T.  /* bcc64: cd to work dir, no -output-dir flag */'
+         (Get-Content -Raw -Path $hbmk2) -replace [regex]::Escape($orig), $patch | Set-Content -NoNewline -Path $hbmk2
+         if (-not (Select-String -Path $hbmk2 -Pattern 'bcc64: cd to work dir' -SimpleMatch -Quiet)) {
+           throw "hbmk2.prg cWorkDir patch did not apply"
+         }
+         Write-Host "Patched hbmk2.prg cWorkDir branch for bcc64 (lCHD_Comp)"
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
 
     - name: Compile and install Harbour
@@ -61,15 +87,8 @@ jobs:
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
         set HB_USER_LIBS=xmath
         set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
-        rem bcc64 (clang) cannot consume hbmk2's compile invocation for several
-        rem contrib *.hbp scripts (minizip, expat, ...). The 'hbmk2.prg patch
-        rem -output-dir {OD}' attempt fixed one branch but the buggy code path
-        rem reached by 'hbmk2 -inc <hbp>' is elsewhere; without solving that
-        rem upstream the only reliable build is the harbour 'src' subtree.
-        win-make.exe -C src || exit /b 1
-        win-make.exe -C src install || exit /b 1
-        if not exist "%HB_INSTALL_PREFIX%\include" mkdir "%HB_INSTALL_PREFIX%\include"
-        xcopy /E /I /Q /Y harbour\include "%HB_INSTALL_PREFIX%\include" >nul
+        win-make.exe || exit /b 1
+        win-make.exe install || exit /b 1
         copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\" >nul
 
     - name: Get current time
