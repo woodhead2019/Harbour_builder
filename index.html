@@ -165,6 +165,42 @@
     .btn.primary { background: var(--accent); color: #111; border-color: var(--accent); }
     .btn.primary:hover { filter: brightness(1.1); color: #111; }
 
+    /* COMMITS LIST */
+    .commits {
+      list-style: none; margin: 0; padding: 0;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--bg-card); overflow: hidden;
+    }
+    .commit {
+      display: grid; grid-template-columns: auto 1fr auto auto; gap: 14px;
+      align-items: center; padding: 12px 16px;
+      border-bottom: 1px solid var(--border); transition: background .15s ease;
+    }
+    .commit:last-child { border-bottom: none; }
+    .commit:hover { background: var(--bg-card-hover); }
+    .commit-sha {
+      font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600;
+      color: var(--accent); padding: 2px 8px; border-radius: 4px;
+      background: var(--accent-soft); white-space: nowrap;
+    }
+    .commit-sha:hover { text-decoration: none; filter: brightness(1.15); }
+    .commit-subject {
+      color: var(--text); overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; min-width: 0; font-size: 0.93rem;
+    }
+    .commit-author {
+      color: var(--text-dim); font-size: 0.82rem; white-space: nowrap;
+    }
+    .commit-date {
+      color: var(--text-mute); font-size: 0.82rem; white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    @media (max-width: 640px) {
+      .commit { grid-template-columns: auto 1fr; row-gap: 4px; }
+      .commit-author, .commit-date { grid-column: 2; font-size: 0.78rem; }
+      .commit-author::before { content: "— "; color: var(--text-mute); }
+    }
+
     /* BUNDLE BANNER */
     .bundle {
       background: linear-gradient(135deg, var(--bg-card) 0%, var(--accent-soft) 200%);
@@ -233,6 +269,16 @@
       <p class="section-sub">Live status pulled from GitHub Actions. Click <strong>Download</strong> to grab the latest artifact (GitHub login required).</p>
 
       <div class="grid" id="builds-grid"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2 class="section-title">Recent upstream changes</h2>
+      <p class="section-sub">Last 10 commits on <a href="https://github.com/harbour/core/commits/master">harbour/core</a> &middot; refreshed hourly.</p>
+      <ul class="commits" id="commits-list">
+        <li class="commit"><span class="skel" style="width:60px"></span><span class="skel"></span></li>
+      </ul>
     </div>
   </section>
 
@@ -406,6 +452,9 @@
       const byFile = {};
       for (const w of (snap.workflows || [])) byFile[w.file] = w.run;
       for (const b of BUILDS) applyRunToCard(b, byFile[b.id] || null);
+
+      // Recent commits
+      renderCommits(snap.recent_commits || []);
     } catch (e) {
       // No snapshot yet — fall back to single batched API call
       try {
@@ -429,8 +478,30 @@
         el.querySelector('[data-role="meta"]').innerHTML =
           `<strong>Waiting for first hourly snapshot.</strong>`;
       }
+      renderCommits([]);
     }
   })();
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+    })[c]);
+  }
+  function renderCommits(commits) {
+    const ul = document.getElementById("commits-list");
+    if (!commits.length) {
+      ul.innerHTML = `<li class="commit"><span class="commit-subject" style="color:var(--text-mute)">No commits available.</span></li>`;
+      return;
+    }
+    ul.innerHTML = commits.map(c => `
+      <li class="commit">
+        <a class="commit-sha" href="${escapeHtml(c.html_url)}" target="_blank" rel="noopener">${escapeHtml(c.short_sha || "")}</a>
+        <span class="commit-subject" title="${escapeHtml(c.subject || "")}">${escapeHtml(c.subject || "")}</span>
+        <span class="commit-author">${escapeHtml(c.author || "")}</span>
+        <span class="commit-date" title="${escapeHtml(c.date || "")}">${timeAgo(c.date)}</span>
+      </li>
+    `).join("");
+  }
 })();
 </script>
 

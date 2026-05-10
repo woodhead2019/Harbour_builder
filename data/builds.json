@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-10T06:03:12Z",
+  "generated_at": "2026-05-10T07:16:49Z",
   "upstream_sha": "0f28a7bb90d179c5ba67af16396ebdfafad3b646",
   "last_built_sha": "0f28a7bb90d179c5ba67af16396ebdfafad3b646",
   "just_dispatched": false,
@@ -21,14 +21,14 @@
     {
       "file": "harbour_bcc_64.yml",
       "run": {
-        "id": 25620590778,
-        "run_number": 204,
+        "id": 25622599097,
+        "run_number": 207,
         "status": "completed",
         "conclusion": "failure",
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/25620590778",
-        "updated_at": "2026-05-10T05:18:41Z",
-        "created_at": "2026-05-10T05:16:36Z",
-        "head_sha": "b489889968beeeffdc8a6aeb9db52bdc1d447efe",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/25622599097",
+        "updated_at": "2026-05-10T07:11:24Z",
+        "created_at": "2026-05-10T07:10:49Z",
+        "head_sha": "e177bce346f56f4a591d2ca1c793ccb922e9cff5",
         "run_attempt": 1
       }
     },
@@ -143,6 +143,88 @@
         "head_sha": "85426011ef6d0ce66c4e4c32739a393ab1f4bd8a",
         "run_attempt": 1
       }
+    }
+  ],
+  "recent_commits": [
+    {
+      "sha": "0f28a7bb90d179c5ba67af16396ebdfafad3b646",
+      "short_sha": "0f28a7b",
+      "subject": "2026-02-28 15:33 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-28T14:33:57Z",
+      "html_url": "https://github.com/harbour/core/commit/0f28a7bb90d179c5ba67af16396ebdfafad3b646"
+    },
+    {
+      "sha": "99434cd641bc20f84545a974c0a9794444114c9d",
+      "short_sha": "99434cd",
+      "subject": "2026-02-27 21:27 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-27T20:27:52Z",
+      "html_url": "https://github.com/harbour/core/commit/99434cd641bc20f84545a974c0a9794444114c9d"
+    },
+    {
+      "sha": "ee7279e537c05936e0282910d9ec7902f6dc0e8b",
+      "short_sha": "ee7279e",
+      "subject": "2026-02-26 23:30 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-26T22:30:31Z",
+      "html_url": "https://github.com/harbour/core/commit/ee7279e537c05936e0282910d9ec7902f6dc0e8b"
+    },
+    {
+      "sha": "88555f21d386f1db30fead0942c3fbe871109b70",
+      "short_sha": "88555f2",
+      "subject": "2026-02-26 23:12 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-26T22:12:35Z",
+      "html_url": "https://github.com/harbour/core/commit/88555f21d386f1db30fead0942c3fbe871109b70"
+    },
+    {
+      "sha": "04f5c639b2a4e697e660eabcd00f971352143e92",
+      "short_sha": "04f5c63",
+      "subject": "2026-02-26 20:50 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-26T19:50:11Z",
+      "html_url": "https://github.com/harbour/core/commit/04f5c639b2a4e697e660eabcd00f971352143e92"
+    },
+    {
+      "sha": "bf2028880341a4d687ed3f684c54031da5d2d572",
+      "short_sha": "bf20288",
+      "subject": "2026-02-16 23:30 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-16T22:30:13Z",
+      "html_url": "https://github.com/harbour/core/commit/bf2028880341a4d687ed3f684c54031da5d2d572"
+    },
+    {
+      "sha": "2d3b56d27f15c34f97ee4dd3fa35d1adafe79f55",
+      "short_sha": "2d3b56d",
+      "subject": "2026-02-12 02:39 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-12T01:39:04Z",
+      "html_url": "https://github.com/harbour/core/commit/2d3b56d27f15c34f97ee4dd3fa35d1adafe79f55"
+    },
+    {
+      "sha": "c8245c2972fcef092e402773fa011ed7005f70f6",
+      "short_sha": "c8245c2",
+      "subject": "2026-02-08 04:06 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-08T03:06:06Z",
+      "html_url": "https://github.com/harbour/core/commit/c8245c2972fcef092e402773fa011ed7005f70f6"
+    },
+    {
+      "sha": "92b5f3a1a170b269ec1235284c6964c73aa454a9",
+      "short_sha": "92b5f3a",
+      "subject": "2026-02-07 20:58 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-07T19:58:17Z",
+      "html_url": "https://github.com/harbour/core/commit/92b5f3a1a170b269ec1235284c6964c73aa454a9"
+    },
+    {
+      "sha": "282528234ca1713a776e07c0f2c9bc95babad22b",
+      "short_sha": "2825282",
+      "subject": "2026-02-06 13:53 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)",
+      "author": "druzus",
+      "date": "2026-02-06T12:53:43Z",
+      "html_url": "https://github.com/harbour/core/commit/282528234ca1713a776e07c0f2c9bc95babad22b"
     }
   ]
 }

@@ -115,17 +115,29 @@ jobs:
             runs_json=$(echo "$runs_json" | jq --arg wf "$wf" --argjson r "$slim" \
               '. + [{file:$wf, run:$r}]')
           done
+          # Recent upstream commits — 10 latest from harbour/core master
+          commits_json=$(gh api 'repos/harbour/core/commits?per_page=10' \
+            --jq '[.[] | {
+              sha,
+              short_sha: (.sha[0:7]),
+              subject: ((.commit.message | split("\n"))[0]),
+              author: ((.author.login // .commit.author.name) // "unknown"),
+              date: .commit.author.date,
+              html_url
+            }]')
           jq -n \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --arg up "${{ steps.core.outputs.sha }}" \
             --arg last "${{ steps.last.outputs.sha }}" \
             --arg dispatched "${{ steps.decide.outputs.dispatch }}" \
             --argjson runs "$runs_json" \
+            --argjson commits "$commits_json" \
             '{generated_at:$ts, upstream_sha:$up, last_built_sha:$last,
-              just_dispatched:($dispatched=="true"), workflows:$runs}' \
+              just_dispatched:($dispatched=="true"), workflows:$runs,
+              recent_commits:$commits}' \
             > data/builds.json
           echo "Snapshot:"
-          cat data/builds.json | jq -r '. | {generated_at, upstream_sha, last_built_sha, just_dispatched, n: (.workflows|length)}'
+          cat data/builds.json | jq -r '. | {generated_at, upstream_sha, last_built_sha, just_dispatched, n_workflows: (.workflows|length), n_commits: (.recent_commits|length)}'
 
       - name: Commit snapshot (and tracked SHA when changed)
         run: |
