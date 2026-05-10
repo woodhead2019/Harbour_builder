@@ -52,7 +52,7 @@ jobs:
            '            ENDIF'
          ) -join "`r`n")
          (Get-Content -Raw -Path $hbmk2) -replace [regex]::Escape($orig), $patch | Set-Content -NoNewline -Path $hbmk2
-         if (-not (Select-String -Path $hbmk2 -Pattern '-output-dir \{OD\}' -SimpleMatch -Quiet)) {
+         if (-not (Select-String -Path $hbmk2 -Pattern '-output-dir {OD}' -SimpleMatch -Quiet)) {
            throw "hbmk2.prg patch did not apply"
          }
          Write-Host "Patched hbmk2.prg multi-source output-dir for bcc64"
