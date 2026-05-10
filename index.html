@@ -77,6 +77,34 @@
       transition: all .2s ease;
     }
     .theme-btn:hover { color: var(--text); border-color: var(--accent); }
+    .star-btn {
+      display: inline-flex; align-items: stretch; gap: 0;
+      border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 600; color: var(--text-dim);
+      overflow: hidden; transition: all .2s ease;
+    }
+    .star-btn:hover { color: var(--text); border-color: var(--accent); text-decoration: none; }
+    .star-btn:hover .star-count { background: var(--accent-soft); }
+    .star-btn-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px;
+    }
+    .star-btn-label .star-icon { color: #d29922; font-size: 0.95rem; }
+    .star-btn:hover .star-icon { transform: scale(1.15); transition: transform .15s ease; }
+    .star-count {
+      display: inline-flex; align-items: center;
+      padding: 6px 10px; border-left: 1px solid var(--border-strong);
+      color: var(--text); background: var(--bg-elev);
+      font-variant-numeric: tabular-nums;
+      transition: background .2s ease;
+    }
+    @media (max-width: 640px) { .star-btn-label span:last-child { display: none; } }
+    .star-cta {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: var(--text-dim); font-weight: 500;
+    }
+    .star-cta:hover { color: var(--accent); text-decoration: none; }
+    .star-cta .star-icon { color: #d29922; }
 
     /* HERO */
     .hero { padding: 80px 0 56px; text-align: center; }
@@ -237,9 +265,15 @@
       <span>Harbour Builder</span>
     </div>
     <nav class="nav-links">
-      <a href="https://github.com/FiveTechSoft/Harbour_builder">GitHub</a>
       <a href="https://github.com/FiveTechSoft/Harbour_builder/actions">Actions</a>
       <a href="https://harbour.github.io/">Harbour Project</a>
+      <a class="star-btn" href="https://github.com/FiveTechSoft/Harbour_builder" target="_blank" rel="noopener" title="Star on GitHub">
+        <span class="star-btn-label">
+          <span class="star-icon">&#9733;</span>
+          <span>Star</span>
+        </span>
+        <span class="star-count" id="star-count">&mdash;</span>
+      </a>
       <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">&#9728;</button>
     </nav>
   </div>
@@ -266,7 +300,11 @@
   <section>
     <div class="container">
       <h2 class="section-title">Available builds</h2>
-      <p class="section-sub">Live status pulled from GitHub Actions. Click <strong>Download</strong> to grab the latest artifact (GitHub login required).</p>
+      <p class="section-sub">
+        Live status pulled from GitHub Actions. Click <strong>Download</strong> to grab the latest artifact (GitHub login required).
+        &middot;
+        <a class="star-cta" href="https://github.com/FiveTechSoft/Harbour_builder" target="_blank" rel="noopener">Find this useful? <span class="star-icon">&#9733;</span> Star the repo</a>
+      </p>
 
       <div class="grid" id="builds-grid"></div>
     </div>
@@ -455,6 +493,10 @@
 
       // Recent commits
       renderCommits(snap.recent_commits || []);
+
+      // Star count in nav
+      const sc = document.getElementById("star-count");
+      if (sc && typeof snap.repo_stars === "number") sc.textContent = snap.repo_stars;
     } catch (e) {
       // No snapshot yet — fall back to single batched API call
       try {
