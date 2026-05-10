@@ -2,7 +2,7 @@ name: Watch harbour/core and trigger all builds
 
 on:
   schedule:
-    - cron: '0 6 * * 0'   # weekly: Sundays 06:00 UTC
+    - cron: '0 * * * *'   # hourly
   workflow_dispatch:
     inputs:
       force:
