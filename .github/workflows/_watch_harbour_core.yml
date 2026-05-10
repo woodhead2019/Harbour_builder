@@ -1,0 +1,103 @@
+name: Watch harbour/core and trigger all builds
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'   # weekly: Sundays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force dispatch even if SHA unchanged'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: watch-harbour-core
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout self
+        uses: actions/checkout@v4
+
+      - name: Resolve latest harbour/core SHA
+        id: core
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sha=$(gh api repos/harbour/core/commits/master --jq .sha)
+          if [ -z "$sha" ]; then
+            echo "Failed to resolve harbour/core HEAD" >&2
+            exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Latest harbour/core SHA: $sha"
+
+      - name: Read last built SHA
+        id: last
+        run: |
+          if [ -f .github/last_core_sha.txt ]; then
+            last=$(tr -d '[:space:]' < .github/last_core_sha.txt)
+          else
+            last=""
+          fi
+          echo "sha=$last" >> "$GITHUB_OUTPUT"
+          echo "Last built SHA: ${last:-<none>}"
+
+      - name: Decide whether to dispatch
+        id: decide
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "reason=manual force" >> "$GITHUB_OUTPUT"
+            echo "dispatch=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.core.outputs.sha }}" != "${{ steps.last.outputs.sha }}" ]; then
+            echo "reason=harbour/core changed" >> "$GITHUB_OUTPUT"
+            echo "dispatch=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "reason=unchanged" >> "$GITHUB_OUTPUT"
+            echo "dispatch=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch all build workflows
+        if: steps.decide.outputs.dispatch == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          workflows=(
+            harbour_bcc_32.yml
+            harbour_bcc_64.yml
+            harbour_darwin_osx.yml
+            harbour_mingw_32.yml
+            harbour_mingw_64.yml
+            harbour_msvc_32.yml
+            harbour_msvc_64.yml
+            harbour_ubuntu_64.yml
+            harbour_win64_ADS_msvc.yml
+            harbour_win64_msvc.yml
+          )
+          echo "Dispatching ${#workflows[@]} workflows (reason: ${{ steps.decide.outputs.reason }})"
+          for wf in "${workflows[@]}"; do
+            echo "  -> $wf"
+            gh workflow run "$wf" --repo "$GITHUB_REPOSITORY" --ref "${GITHUB_REF_NAME}"
+          done
+
+      - name: Update tracked SHA
+        if: steps.decide.outputs.dispatch == 'true' && steps.core.outputs.sha != steps.last.outputs.sha
+        run: |
+          echo "${{ steps.core.outputs.sha }}" > .github/last_core_sha.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/last_core_sha.txt
+          git commit -m "chore: track harbour/core ${{ steps.core.outputs.sha }}"
+          git push
+
+      - name: Skipped notice
+        if: steps.decide.outputs.dispatch != 'true'
+        run: |
+          echo "No dispatch — harbour/core unchanged at ${{ steps.core.outputs.sha }}"

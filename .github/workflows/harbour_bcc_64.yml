@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: windows-2022
 
-   # if: github.actor == github.event.repository.owner.login
 
     steps:
     - name: Checkout harbour/core repo

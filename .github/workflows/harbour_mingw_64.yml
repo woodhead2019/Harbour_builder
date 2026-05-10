@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: windows-2022
 
-    if: github.actor == github.event.repository.owner.login
 
     steps:
     - name: Checkout harbour/core repo
@@ -22,7 +21,9 @@ jobs:
     - name: Install dependencies
       run: |
          choco install openssl -y --no-progress
-         copy-Item 'c:\Program Files\OpenSSL-Win64' -destination 'c:\OpenSSL-Win64' -recurse
+         $opensslSrc = @('C:\Program Files\OpenSSL-Win64','C:\Program Files\OpenSSL') | Where-Object { Test-Path $_ } | Select-Object -First 1
+         if (-not $opensslSrc) { throw "OpenSSL install dir not found under Program Files" }
+         Copy-Item -Path $opensslSrc -Destination 'C:\OpenSSL-Win64' -Recurse -Force
          choco install curl -y --no-progress
          (Get-Content -path harbour\contrib\hbssl\hbssl.hbp) -replace '/../inc32','' | Set-Content -path harbour\contrib\hbssl\hbssl.hbp
 
