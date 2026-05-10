@@ -23,22 +23,14 @@ jobs:
          brew install curl
          brew install pcre
 
-    - name: Compile Harbour
+    - name: Compile and install Harbour
       run: |
         cd harbour
         export HB_WITH_CURL="$(brew --prefix curl)/include"
         export HB_BUILD_CONTRIBS=""
+        export HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/output"
         make
-
-    - name: Create output folders
-      run: |
-        mkdir output
-        mkdir output/bin
-        cp harbour/bin/darwin/clang/* output/bin
-        mkdir output/lib
-        cp harbour/lib/darwin/clang/*.a output/lib
-        mkdir output/include
-        cp harbour/include/* output/include
+        make install
 
     - name: Get current time
       id: current-time

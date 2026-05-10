@@ -32,7 +32,7 @@ jobs:
       with:
         arch: x86
 
-    - name: Compile Harbour
+    - name: Compile and install Harbour
       shell: cmd
       run: |
         cd harbour
@@ -44,18 +44,9 @@ jobs:
         set HB_STATIC_OPENSSL=yes
         set HB_STATIC_CURL=yes
         set HB_COMPILER=msvc
-        win-make.exe
-
-    - name: Create output folders
-      shell: cmd
-      run: |
-        mkdir output
-        mkdir output\bin
-        copy harbour\bin\win\msvc\*.exe output\bin
-        mkdir output\lib
-        copy harbour\lib\win\msvc\*.lib output\lib
-        mkdir output\include
-        copy harbour\include output\include
+        set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
+        win-make.exe || exit /b 1
+        win-make.exe install || exit /b 1
 
     - name: Get current time
       id: current-time

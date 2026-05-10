@@ -214,8 +214,8 @@
   <section class="hero">
     <div class="container">
       <span class="hero-tag">CI/CD &middot; cross-platform Harbour</span>
-      <h1>Fresh Harbour binaries,<br />every flavour, every week.</h1>
-      <p>Automated GitHub Actions workflows compile the latest <a href="https://github.com/harbour/core">harbour/core</a> for Windows (BCC, MinGW, MSVC), Linux (GCC) and macOS (Clang). Pick your toolchain and download.</p>
+      <h1>Fresh Harbour binaries,<br />every flavour, every hour.</h1>
+      <p>Automated GitHub Actions workflows poll <a href="https://github.com/harbour/core">harbour/core</a> hourly and compile for Windows (BCC, MinGW, MSVC), Linux (GCC) and macOS (Clang) whenever upstream moves. Pick your toolchain and download.</p>
 
       <div class="hero-meta" id="upstream-meta">
         <span class="dot" id="freshness-dot"></span>
@@ -251,12 +251,12 @@
   <section>
     <div class="container">
       <h2 class="section-title">How it works</h2>
-      <p class="section-sub">A weekly orchestrator polls <code>harbour/core</code>; when its HEAD changes, all build workflows are dispatched in parallel.</p>
+      <p class="section-sub">An hourly orchestrator polls <code>harbour/core</code>; when its HEAD changes, all build workflows are dispatched in parallel.</p>
       <ol style="color: var(--text-dim); line-height: 1.8;">
-        <li>Cron fires <code>_watch_harbour_core.yml</code> every Sunday 06:00 UTC.</li>
+        <li>Cron fires <code>_watch_harbour_core.yml</code> every hour, on the hour (UTC).</li>
         <li>It compares <code>harbour/core</code>'s HEAD SHA against the value tracked in <code>.github/last_core_sha.txt</code>.</li>
         <li>If the SHA changed, all 10 build workflows are triggered via <code>gh workflow run</code>.</li>
-        <li>Each workflow uploads its artifact (binaries + libs + headers) to GitHub Actions.</li>
+        <li>Each workflow installs its tree (binaries + libs + headers + contribs) to <code>HB_INSTALL_PREFIX</code> and uploads it as a GitHub Actions artifact.</li>
         <li>The new SHA is committed back to track what was last built.</li>
       </ol>
     </div>

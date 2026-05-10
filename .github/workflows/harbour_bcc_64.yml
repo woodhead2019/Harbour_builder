@@ -37,7 +37,7 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
 
-    - name: Compile Harbour
+    - name: Compile and install Harbour
       shell: cmd
       run: |
         cd harbour
@@ -59,20 +59,11 @@ jobs:
         set HB_USER_RESFLAGS=-Ic:\bcc7164\include\windows\sdk\
         set HB_TRACE=yes
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
-        set HB_USER_LIBS=-Lc:\bcc7164\LIB xmath
-        win-make.exe
-
-    - name: Create output folders
-      shell: cmd
-      run: |
-        mkdir output
-        mkdir output\bin
-        copy harbour\bin\win\bcc64\*.exe output\bin
-        mkdir output\lib
-        copy harbour\lib\win\bcc64\*.a output\lib
-        copy c:\bcc7164\lib\xmath.a output\lib
-        mkdir output\include
-        copy harbour\include output\include
+        set HB_USER_LIBS=xmath
+        set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
+        win-make.exe || exit /b 1
+        win-make.exe install || exit /b 1
+        copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\"
 
     - name: Get current time
       id: current-time

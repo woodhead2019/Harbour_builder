@@ -27,23 +27,15 @@ jobs:
          sudo apt install -y libcurl4-openssl-dev libssl-dev gcc
          sudo cp -r /usr/include/x86_64-linux-gnu/curl /usr/include
 
-    - name: Compile harbour
+    - name: Compile and install harbour
       run: |
         cd harbour
         export HB_USER_CFLAGS="-fPIC"
         export HB_BUILD_CONTRIBS
         export HB_WITH_PCRE=local
+        export HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/output"
         make
-
-    - name: Create output folders
-      run: |
-        mkdir output
-        mkdir output/bin
-        cp harbour/bin/linux/gcc/* output/bin
-        mkdir output/lib
-        cp harbour/lib/linux/gcc/*.a output/lib
-        mkdir output/include
-        cp harbour/include/* output/include
+        make install
 
     - name: Get current time
       id: current-time
