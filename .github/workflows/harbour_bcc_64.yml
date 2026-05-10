@@ -37,9 +37,14 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
          # bcc64 (clang) cannot handle hbmk2's '-c -o<dir> file1.c file2.c ...' batch
-         # invocation used by contrib/hbmzip/3rd/minizip/minizip.hbp. Drop hbmzip
-         # entirely from the contrib build so the rest of the contribs ship.
-         (Get-Content -path harbour\contrib\Makefile) | Where-Object { $_ -notmatch '^\s*hbmzip\b' } | Set-Content -path harbour\contrib\Makefile
+         # invocation used by contrib/hbmzip/3rd/minizip/minizip.hbp. The contrib
+         # Makefile is just a stub that calls make.hb which auto-discovers
+         # contribs by scanning for project files; the only reliable way to
+         # exclude one is to delete the directory before the build.
+         if (Test-Path harbour\contrib\hbmzip) {
+           Remove-Item -Recurse -Force harbour\contrib\hbmzip
+           Write-Host "Removed harbour/contrib/hbmzip (bcc64 incompatible)"
+         }
 
     - name: Compile and install Harbour
       shell: cmd
