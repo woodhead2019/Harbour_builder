@@ -35,6 +35,27 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'cw64mt.lib','cw64mt.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'import64.lib','import64.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
+         # Patch hbmk2 multi-source compile-only path for bcc64.
+         # Upstream emits 'AAdd( hbmk[ _HBMK_aOPTC ], "-n{OD}" )' for both bcc and
+         # bcc64 when there are multiple sources and no work dir. bcc64 (clang) does
+         # not accept '-n<dir>' as an output dir flag and treats it as input,
+         # producing 'cannot specify -o when generating multiple output files'.
+         # Inject a per-compiler branch that uses '-output-dir {OD}' for bcc64,
+         # matching the cWorkDir branch already present in hbmk2.prg.
+         $hbmk2 = 'harbour\utils\hbmk2\hbmk2.prg'
+         $orig  = 'AAdd( hbmk[ _HBMK_aOPTC ], "-n{OD}" )'
+         $patch = (@(
+           'IF hbmk[ _HBMK_cCOMP ] == "bcc64"',
+           '               AAdd( hbmk[ _HBMK_aOPTC ], "-output-dir {OD}" )',
+           '            ELSE',
+           '               AAdd( hbmk[ _HBMK_aOPTC ], "-n{OD}" )',
+           '            ENDIF'
+         ) -join "`r`n")
+         (Get-Content -Raw -Path $hbmk2) -replace [regex]::Escape($orig), $patch | Set-Content -NoNewline -Path $hbmk2
+         if (-not (Select-String -Path $hbmk2 -Pattern '-output-dir \{OD\}' -SimpleMatch -Quiet)) {
+           throw "hbmk2.prg patch did not apply"
+         }
+         Write-Host "Patched hbmk2.prg multi-source output-dir for bcc64"
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
 
     - name: Compile and install Harbour
@@ -61,16 +82,8 @@ jobs:
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
         set HB_USER_LIBS=xmath
         set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
-        rem bcc64 (clang) rejects hbmk2's '-c -o<dir> a.c b.c ...' batch pattern,
-        rem which is used by every contrib/<X>/3rd/<lib>/<lib>.hbp project
-        rem (minizip, expat, magic, lzf, ...). Building only the harbour 'src'
-        rem subtree skips all contribs and produces working core binaries +
-        rem core libs. Restore full contrib build only after the upstream
-        rem hbmk2 / bcc7164 toolchain mismatch is resolved.
-        win-make.exe -C src || exit /b 1
-        win-make.exe -C src install || exit /b 1
-        if not exist "%HB_INSTALL_PREFIX%\include" mkdir "%HB_INSTALL_PREFIX%\include"
-        xcopy /E /I /Q /Y harbour\include "%HB_INSTALL_PREFIX%\include" >nul
+        win-make.exe || exit /b 1
+        win-make.exe install || exit /b 1
         copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\" >nul
 
     - name: Get current time
