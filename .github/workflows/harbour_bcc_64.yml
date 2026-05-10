@@ -36,6 +36,10 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'import64.lib','import64.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
+         # bcc64 (clang) cannot handle hbmk2's '-c -o<dir> file1.c file2.c ...' batch
+         # invocation used by contrib/hbmzip/3rd/minizip/minizip.hbp. Drop hbmzip
+         # entirely from the contrib build so the rest of the contribs ship.
+         (Get-Content -path harbour\contrib\Makefile) | Where-Object { $_ -notmatch '^\s*hbmzip\b' } | Set-Content -path harbour\contrib\Makefile
 
     - name: Compile and install Harbour
       shell: cmd
@@ -61,11 +65,7 @@ jobs:
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
         set HB_USER_LIBS=xmath
         set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
-        rem core build is mandatory; contrib is best-effort because
-        rem bcc64 (clang-based) rejects hbmk2's multi-source/-o invocation
-        rem in some 3rd-party contribs (e.g. hbmzip/3rd/minizip).
-        win-make.exe -C src || exit /b 1
-        win-make.exe -C contrib
+        win-make.exe || exit /b 1
         win-make.exe install || exit /b 1
         copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\"
 
