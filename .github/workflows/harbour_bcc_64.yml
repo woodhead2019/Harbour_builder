@@ -36,15 +36,6 @@ jobs:
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace 'import64.lib','import64.a' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (Get-Content -path harbour\utils\hbmk2\hbmk2.prg) -replace '"uuid",','' | Set-Content -path harbour\utils\hbmk2\hbmk2.prg
          (new-object System.Net.WebClient).DownloadFile('https://github.com/FiveTechSoft/Harbour_builder/blob/master/.github/temp/xmath.a?raw=true', 'C:\bcc7164\lib\xmath.a')
-         # bcc64 (clang) cannot handle hbmk2's '-c -o<dir> file1.c file2.c ...' batch
-         # invocation used by contrib/hbmzip/3rd/minizip/minizip.hbp. The contrib
-         # Makefile is just a stub that calls make.hb which auto-discovers
-         # contribs by scanning for project files; the only reliable way to
-         # exclude one is to delete the directory before the build.
-         if (Test-Path harbour\contrib\hbmzip) {
-           Remove-Item -Recurse -Force harbour\contrib\hbmzip
-           Write-Host "Removed harbour/contrib/hbmzip (bcc64 incompatible)"
-         }
 
     - name: Compile and install Harbour
       shell: cmd
@@ -70,9 +61,17 @@ jobs:
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
         set HB_USER_LIBS=xmath
         set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
-        win-make.exe || exit /b 1
-        win-make.exe install || exit /b 1
-        copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\"
+        rem bcc64 (clang) rejects hbmk2's '-c -o<dir> a.c b.c ...' batch pattern,
+        rem which is used by every contrib/<X>/3rd/<lib>/<lib>.hbp project
+        rem (minizip, expat, magic, lzf, ...). Building only the harbour 'src'
+        rem subtree skips all contribs and produces working core binaries +
+        rem core libs. Restore full contrib build only after the upstream
+        rem hbmk2 / bcc7164 toolchain mismatch is resolved.
+        win-make.exe -C src || exit /b 1
+        win-make.exe -C src install || exit /b 1
+        if not exist "%HB_INSTALL_PREFIX%\include" mkdir "%HB_INSTALL_PREFIX%\include"
+        xcopy /E /I /Q /Y harbour\include "%HB_INSTALL_PREFIX%\include" >nul
+        copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\" >nul
 
     - name: Get current time
       id: current-time
