@@ -1,9 +1,11 @@
 {
-  "generated_at": "2026-05-10T07:24:30Z",
+  "generated_at": "2026-05-10T07:42:54Z",
   "upstream_sha": "0f28a7bb90d179c5ba67af16396ebdfafad3b646",
   "last_built_sha": "0f28a7bb90d179c5ba67af16396ebdfafad3b646",
   "just_dispatched": false,
   "repo_stars": 38,
+  "total_downloads": 0,
+  "releases_count": 1,
   "workflows": [
     {
       "file": "harbour_bcc_32.yml",
@@ -22,14 +24,14 @@
     {
       "file": "harbour_bcc_64.yml",
       "run": {
-        "id": 25622599097,
-        "run_number": 207,
+        "id": 25623105735,
+        "run_number": 209,
         "status": "completed",
-        "conclusion": "failure",
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/25622599097",
-        "updated_at": "2026-05-10T07:11:24Z",
-        "created_at": "2026-05-10T07:10:49Z",
-        "head_sha": "e177bce346f56f4a591d2ca1c793ccb922e9cff5",
+        "conclusion": "success",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/25623105735",
+        "updated_at": "2026-05-10T07:42:28Z",
+        "created_at": "2026-05-10T07:38:41Z",
+        "head_sha": "241f6135d8e16a4f361e12826f8cb35758e1d05e",
         "run_attempt": 1
       }
     },

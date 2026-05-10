@@ -105,6 +105,16 @@
     }
     .star-cta:hover { color: var(--accent); text-decoration: none; }
     .star-cta .star-icon { color: #d29922; }
+    .dl-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600;
+      color: var(--text-dim); transition: all .2s ease;
+    }
+    .dl-chip:hover { color: var(--text); border-color: var(--accent); text-decoration: none; }
+    .dl-chip .dl-icon { color: var(--accent); font-size: 0.95rem; }
+    .dl-chip-count { color: var(--text); font-variant-numeric: tabular-nums; }
+    @media (max-width: 720px) { .dl-chip span:not(.dl-chip-count):not(.dl-icon) { display: none; } }
 
     /* HERO */
     .hero { padding: 80px 0 56px; text-align: center; }
@@ -266,7 +276,12 @@
     </div>
     <nav class="nav-links">
       <a href="https://github.com/FiveTechSoft/Harbour_builder/actions">Actions</a>
-      <a href="https://harbour.github.io/">Harbour Project</a>
+      <a href="https://github.com/harbour/core">Harbour Project</a>
+      <a class="dl-chip" href="https://github.com/FiveTechSoft/Harbour_builder/releases" target="_blank" rel="noopener" title="Total release asset downloads">
+        <span class="dl-icon">&#x2B07;</span>
+        <span>Downloads</span>
+        <span class="dl-chip-count" id="dl-count">&mdash;</span>
+      </a>
       <a class="star-btn" href="https://github.com/FiveTechSoft/Harbour_builder" target="_blank" rel="noopener" title="Star on GitHub">
         <span class="star-btn-label">
           <span class="star-icon">&#9733;</span>
@@ -470,10 +485,12 @@
       if (!r.ok) throw new Error("snapshot " + r.status);
       const snap = await r.json();
 
-      // Star count — update first so a downstream render bug doesn't hide it.
+      // Top-of-nav counters — update first so a downstream render bug doesn't hide them.
       try {
         const sc = document.getElementById("star-count");
         if (sc && typeof snap.repo_stars === "number") sc.textContent = snap.repo_stars;
+        const dc = document.getElementById("dl-count");
+        if (dc && typeof snap.total_downloads === "number") dc.textContent = snap.total_downloads.toLocaleString();
       } catch (_) {}
 
       // SHAs

@@ -127,6 +127,13 @@ jobs:
             }]')
           # Repo stargazers count (for the Star CTA in the landing page)
           repo_stars=$(gh api "repos/$GITHUB_REPOSITORY" --jq '.stargazers_count // 0')
+          # Sum download_count across every asset of every release (real, GitHub-tracked).
+          # Anonymous Releases page asset clicks all hit this counter, so it is the
+          # honest 'how many people pulled a build' number. Returns 0 when there
+          # are no releases yet.
+          total_downloads=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" \
+            --jq '[.[].assets[]? | .download_count] | add // 0')
+          releases_count=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq 'length')
           jq -n \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --arg up "${{ steps.core.outputs.sha }}" \
@@ -135,8 +142,11 @@ jobs:
             --argjson runs "$runs_json" \
             --argjson commits "$commits_json" \
             --argjson stars "$repo_stars" \
+            --argjson dls "$total_downloads" \
+            --argjson rels "$releases_count" \
             '{generated_at:$ts, upstream_sha:$up, last_built_sha:$last,
               just_dispatched:($dispatched=="true"), repo_stars:$stars,
+              total_downloads:$dls, releases_count:$rels,
               workflows:$runs, recent_commits:$commits}' \
             > data/builds.json
           echo "Snapshot:"
