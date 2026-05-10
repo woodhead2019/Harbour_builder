@@ -345,88 +345,87 @@
     if (sec < 86400 * 30) return Math.floor(sec / 86400) + "d ago";
     return d.toISOString().slice(0, 10);
   }
-  async function gh(path) {
-    const r = await fetch("https://api.github.com" + path, {
-      headers: { "Accept": "application/vnd.github+json" }
-    });
-    if (!r.ok) throw new Error(path + " -> " + r.status);
-    return r.json();
+
+  function applyRunToCard(b, run) {
+    const el = cardEls[b.id];
+    const statusEl = el.querySelector('[data-role="status"]');
+    const labelEl = el.querySelector('[data-role="status-label"]');
+    const metaEl = el.querySelector('[data-role="meta"]');
+    const dlBtn = el.querySelector('[data-role="download"]');
+
+    if (!run) {
+      statusEl.className = "status unknown";
+      labelEl.textContent = "no runs";
+      metaEl.innerHTML = `<strong>Never built</strong>`;
+      return;
+    }
+
+    let cls = "unknown", label = run.status;
+    if (run.status === "in_progress" || run.status === "queued") {
+      cls = "running"; label = run.status.replace("_", " ");
+    } else if (run.conclusion === "success") {
+      cls = "success"; label = "passing";
+    } else if (run.conclusion === "failure" || run.conclusion === "cancelled" || run.conclusion === "timed_out") {
+      cls = "failure"; label = run.conclusion;
+    }
+    statusEl.className = "status " + cls;
+    labelEl.textContent = label;
+
+    metaEl.innerHTML = `<strong>Last build:</strong> ${timeAgo(run.updated_at)} &middot; <a href="${run.html_url}" target="_blank" rel="noopener">#${run.run_number}</a>`;
+    dlBtn.href = run.conclusion === "success"
+      ? `https://github.com/${REPO}/actions/runs/${run.id}#artifacts`
+      : `https://github.com/${REPO}/actions/workflows/${b.id}`;
   }
 
-  // ---------- UPSTREAM SHA ----------
+  // ---------- LOAD SNAPSHOT (single static fetch, no API quota) ----------
   (async () => {
     try {
-      const upstream = await gh(`/repos/${UPSTREAM}/commits/master`);
-      const upSha = upstream.sha.slice(0, 7);
-      document.getElementById("upstream-sha").innerHTML =
-        `<a href="https://github.com/${UPSTREAM}/commit/${upstream.sha}" target="_blank" rel="noopener">${upSha}</a>`;
+      const r = await fetch(`./data/builds.json?cb=${Date.now()}`);
+      if (!r.ok) throw new Error("snapshot " + r.status);
+      const snap = await r.json();
 
-      // last_core_sha.txt from raw
-      let builtSha = "—";
-      try {
-        const r = await fetch(`https://raw.githubusercontent.com/${REPO}/master/.github/last_core_sha.txt?cb=${Date.now()}`);
-        if (r.ok) builtSha = (await r.text()).trim().slice(0, 7);
-      } catch (_) {}
-      document.getElementById("built-sha").textContent = builtSha;
-
+      // SHAs
+      const up7 = (snap.upstream_sha || "").slice(0, 7);
+      const built7 = (snap.last_built_sha || "").slice(0, 7) || "—";
+      document.getElementById("upstream-sha").innerHTML = up7
+        ? `<a href="https://github.com/${UPSTREAM}/commit/${snap.upstream_sha}" target="_blank" rel="noopener">${up7}</a>`
+        : "unknown";
+      document.getElementById("built-sha").textContent = built7;
       const dot = document.getElementById("freshness-dot");
-      if (builtSha !== "—" && upstream.sha.startsWith(builtSha)) {
+      if (built7 !== "—" && snap.upstream_sha && snap.upstream_sha.startsWith(built7)) {
         dot.classList.add("fresh");
-        dot.title = "Up to date with harbour/core";
+        dot.title = "Up to date with harbour/core (snapshot " + snap.generated_at + ")";
       } else {
         dot.classList.add("stale");
-        dot.title = "harbour/core has new commits not yet built";
+        dot.title = "harbour/core ahead of last built (snapshot " + snap.generated_at + ")";
       }
+
+      // Build cards
+      const byFile = {};
+      for (const w of (snap.workflows || [])) byFile[w.file] = w.run;
+      for (const b of BUILDS) applyRunToCard(b, byFile[b.id] || null);
     } catch (e) {
-      document.getElementById("upstream-sha").textContent = "unavailable";
-      document.getElementById("built-sha").textContent = "—";
-    }
-  })();
-
-  // ---------- BUILD STATUSES ----------
-  (async () => {
-    for (const b of BUILDS) {
-      const el = cardEls[b.id];
+      // No snapshot yet — fall back to single batched API call
       try {
-        const data = await gh(`/repos/${REPO}/actions/workflows/${b.id}/runs?per_page=1`);
-        const run = (data.workflow_runs || [])[0];
-        const statusEl = el.querySelector('[data-role="status"]');
-        const labelEl = el.querySelector('[data-role="status-label"]');
-        const metaEl = el.querySelector('[data-role="meta"]');
-        const dlBtn = el.querySelector('[data-role="download"]');
-
-        if (!run) {
-          statusEl.className = "status unknown";
-          labelEl.textContent = "no runs";
-          metaEl.innerHTML = `<strong>Never built</strong>`;
-          continue;
-        }
-
-        let cls = "unknown", label = run.status;
-        if (run.status === "in_progress" || run.status === "queued") {
-          cls = "running"; label = run.status.replace("_", " ");
-        } else if (run.conclusion === "success") {
-          cls = "success"; label = "passing";
-        } else if (run.conclusion === "failure" || run.conclusion === "cancelled" || run.conclusion === "timed_out") {
-          cls = "failure"; label = run.conclusion;
-        }
-        statusEl.className = "status " + cls;
-        labelEl.textContent = label;
-
-        metaEl.innerHTML = `<strong>Last build:</strong> ${timeAgo(run.updated_at)} &middot; <a href="${run.html_url}" target="_blank" rel="noopener">#${run.run_number}</a>`;
-
-        if (run.conclusion === "success") {
-          dlBtn.href = `https://github.com/${REPO}/actions/runs/${run.id}#artifacts`;
+        const upstream = await fetch(`https://api.github.com/repos/${UPSTREAM}/commits/master`).then(r => r.json());
+        if (upstream && upstream.sha) {
+          const upSha = upstream.sha.slice(0, 7);
+          document.getElementById("upstream-sha").innerHTML =
+            `<a href="https://github.com/${UPSTREAM}/commit/${upstream.sha}" target="_blank" rel="noopener">${upSha}</a>`;
+          document.getElementById("freshness-dot").classList.add("stale");
         } else {
-          dlBtn.href = `https://github.com/${REPO}/actions/workflows/${b.id}`;
+          document.getElementById("upstream-sha").textContent = "snapshot pending";
         }
-      } catch (e) {
-        const statusEl = el.querySelector('[data-role="status"]');
-        const labelEl = el.querySelector('[data-role="status-label"]');
-        statusEl.className = "status unknown";
-        labelEl.textContent = "rate-limited";
-        el.querySelector('[data-role="meta"]').innerHTML = `<strong>API throttled.</strong> Try again in a minute.`;
-        break; // probably rate-limited; stop hammering
+        document.getElementById("built-sha").textContent = "—";
+      } catch (_) {
+        document.getElementById("upstream-sha").textContent = "snapshot pending";
+        document.getElementById("built-sha").textContent = "—";
+      }
+      for (const b of BUILDS) {
+        const el = cardEls[b.id];
+        el.querySelector('[data-role="status-label"]').textContent = "snapshot pending";
+        el.querySelector('[data-role="meta"]').innerHTML =
+          `<strong>Waiting for first hourly snapshot.</strong>`;
       }
     }
   })();
