@@ -61,7 +61,11 @@ jobs:
         set HB_USER_LDFLAGS=-Lc:\bcc7164\LIB -Lharbour\lib\win\bcc64
         set HB_USER_LIBS=xmath
         set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
-        win-make.exe || exit /b 1
+        rem core build is mandatory; contrib is best-effort because
+        rem bcc64 (clang-based) rejects hbmk2's multi-source/-o invocation
+        rem in some 3rd-party contribs (e.g. hbmzip/3rd/minizip).
+        win-make.exe -C src || exit /b 1
+        win-make.exe -C contrib
         win-make.exe install || exit /b 1
         copy c:\bcc7164\lib\xmath.a "%HB_INSTALL_PREFIX%\lib\win\bcc64\"
 
