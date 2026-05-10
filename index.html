@@ -470,6 +470,12 @@
       if (!r.ok) throw new Error("snapshot " + r.status);
       const snap = await r.json();
 
+      // Star count — update first so a downstream render bug doesn't hide it.
+      try {
+        const sc = document.getElementById("star-count");
+        if (sc && typeof snap.repo_stars === "number") sc.textContent = snap.repo_stars;
+      } catch (_) {}
+
       // SHAs
       const up7 = (snap.upstream_sha || "").slice(0, 7);
       const built7 = (snap.last_built_sha || "").slice(0, 7) || "—";
@@ -493,10 +499,6 @@
 
       // Recent commits
       renderCommits(snap.recent_commits || []);
-
-      // Star count in nav
-      const sc = document.getElementById("star-count");
-      if (sc && typeof snap.repo_stars === "number") sc.textContent = snap.repo_stars;
     } catch (e) {
       // No snapshot yet — fall back to single batched API call
       try {
