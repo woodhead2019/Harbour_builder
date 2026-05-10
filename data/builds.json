@@ -22,20 +22,6 @@
       }
     },
     {
-      "file": "harbour_bcc_64.yml",
-      "run": {
-        "id": 25623105735,
-        "run_number": 209,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/25623105735",
-        "updated_at": "2026-05-10T07:42:28Z",
-        "created_at": "2026-05-10T07:38:41Z",
-        "head_sha": "241f6135d8e16a4f361e12826f8cb35758e1d05e",
-        "run_attempt": 1
-      }
-    },
-    {
       "file": "harbour_darwin_osx.yml",
       "run": {
         "id": 25620043731,

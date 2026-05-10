@@ -4,7 +4,6 @@ on:
   workflow_run:
     workflows:
       - Harbour for Windows 32 using BCC
-      - Harbour for Windows 64 using BCC
       - Harbour for Apple Darwin
       - Harbour for Windows 32 using MinGW
       - Harbour for Windows 64 using MinGW
@@ -70,7 +69,6 @@ jobs:
           set -e
           workflows=(
             harbour_bcc_32.yml
-            harbour_bcc_64.yml
             harbour_darwin_osx.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
