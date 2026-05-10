@@ -240,10 +240,11 @@
     <div class="container">
       <div class="bundle">
         <div class="bundle-text">
-          <h3>Want everything in one zip?</h3>
-          <p>A curated bundle of all flavours is published periodically by FiveTechSoft. No GitHub login needed.</p>
+          <h3>Tagged releases per harbour/core SHA</h3>
+          <p>Every time upstream <code>harbour/core</code> moves, we publish a GitHub Release with all 10 flavours attached as zips. No login needed to download.</p>
         </div>
-        <a class="btn primary" href="https://www.fivetechsoft.com/files/harbour/harbour_all.zip" rel="noopener">Download harbour_all.zip</a>
+        <a class="btn primary" href="https://github.com/FiveTechSoft/Harbour_builder/releases/latest" rel="noopener">Latest release</a>
+        <a class="btn" href="https://www.fivetechsoft.com/files/harbour/harbour_all.zip" rel="noopener">Legacy harbour_all.zip</a>
       </div>
     </div>
   </section>
@@ -258,6 +259,7 @@
         <li>If the SHA changed, all 10 build workflows are triggered via <code>gh workflow run</code>.</li>
         <li>Each workflow installs its tree (binaries + libs + headers + contribs) to <code>HB_INSTALL_PREFIX</code> and uploads it as a GitHub Actions artifact.</li>
         <li>The new SHA is committed back to track what was last built.</li>
+        <li>When the last build of the batch finishes, <code>_publish_release.yml</code> bundles all 10 artifacts into a tagged GitHub Release named <code>core-&lt;sha7&gt;</code>.</li>
       </ol>
     </div>
   </section>
