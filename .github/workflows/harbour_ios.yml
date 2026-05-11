@@ -1,8 +1,10 @@
 name: Harbour for iOS
 
 # Experimental: Harbour core is cross-compiled with the iOS SDK.
-# Phase 1 builds the host tools (compiler/hbmk2), phase 2 rebuilds the
-# C libraries against the iOS sysroot. Only static libs are produced.
+# Phase 1 builds the host tools (compiler/hbmk2). Phase 2 patches a few
+# core sources that call APIs the iOS SDK marks unavailable (system(),
+# ...) and rebuilds the C libraries against the iOS sysroot.
+# Only static libs are produced (process-spawning RTL funcs become no-ops).
 
 on:
   workflow_dispatch:
@@ -31,7 +33,20 @@ jobs:
     - name: Build host Harbour (compiler + hbmk2)
       run: |
         cd harbour
-        make HB_BUILD_CONTRIBS="" HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/host" install
+        make HB_BUILD_CONTRIBS=no HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/host" install
+
+    - name: Patch core sources for iOS (neutralise SDK-forbidden calls)
+      run: |
+        cd harbour
+        # system() is __API_UNAVAILABLE(ios). Redirect the few call sites to a
+        # local stub that returns -1 (running external commands is meaningless
+        # in the iOS sandbox anyway). The stub is prepended to each file; the
+        # \b before "system" means it never matches "hb_ios_no_system(".
+        for f in src/common/hbfopen.c src/rtl/run.c src/rtl/hbrunfun.c; do
+          perl -0pi -e 's/\A/static int hb_ios_no_system( const char * c ) { ( void ) c; return -1; }\n/' "$f"
+          perl -pi  -e 's/\bsystem\s*\(/hb_ios_no_system(/g' "$f"
+          echo "patched $f"
+        done
 
     - name: Cross-compile Harbour for iOS (${{ matrix.name }})
       run: |
@@ -45,7 +60,7 @@ jobs:
         export HB_HOST_BIN="$GITHUB_WORKSPACE/host/bin"
         export HB_USER_CFLAGS="-arch ${{ matrix.arch }} -isysroot $SYSROOT ${{ matrix.minflag }}"
         export HB_USER_LDFLAGS="-arch ${{ matrix.arch }} -isysroot $SYSROOT ${{ matrix.minflag }}"
-        export HB_BUILD_CONTRIBS=""
+        export HB_BUILD_CONTRIBS=no
         export HB_BUILD_DYN=no
         export HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/output"
         make
