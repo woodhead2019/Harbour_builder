@@ -1,0 +1,53 @@
+name: Harbour for Windows ARM64 using MSVC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-11-arm   # native Windows on ARM64
+
+    steps:
+    - name: Checkout harbour/core repo
+      uses: actions/checkout@v4
+      with:
+       repository: harbour/core
+       path: harbour
+
+    - name: Setup MSVC environment (arm64)
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: arm64
+
+    - name: Compile and install Harbour
+      shell: cmd
+      run: |
+        cd harbour
+        set HB_BUILD_MODE=c
+        set HB_USER_PRGFLAGS=-l-
+        set HB_BUILD_CONTRIBS=
+        set HB_BUILD_DYN=no
+        set HB_BUILD_CONTRIB_DYN=no
+        set HB_COMPILER=msvcarm64
+        set HB_CPU=arm64
+        set HB_INSTALL_PREFIX=%GITHUB_WORKSPACE%\output
+        win-make.exe || exit /b 1
+        win-make.exe install || exit /b 1
+
+    - name: Get current time
+      id: current-time
+      shell: pwsh
+      run: |
+        $time = Get-Date -Format "yyyy_MM_dd"
+        "formattedTime=$time" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+    - name: Upload Harbour to artifact
+      env:
+         TIME: "${{ steps.current-time.outputs.formattedTime }}"
+      uses: actions/upload-artifact@v4
+      with:
+       name: harbour_win_arm64_msvc_${{ env.TIME }}
+       path: output

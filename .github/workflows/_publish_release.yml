@@ -5,10 +5,12 @@ on:
     workflows:
       - Harbour for Windows 32 using BCC
       - Harbour for Apple Darwin
+      - Harbour for Apple Darwin ARM64
       - Harbour for Windows 32 using MinGW
       - Harbour for Windows 64 using MinGW
       - Harbour for Windows 32 using MSVC
       - Harbour for Windows 64 using MSVC
+      - Harbour for Windows ARM64 using MSVC
       - Harbour for Ubuntu 64-bits
       - Harbour for Win64 and ADS using msvc
       - Harbour for Win64 using msvc
@@ -70,6 +72,7 @@ jobs:
           workflows=(
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
+            harbour_darwin_arm.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
@@ -77,6 +80,7 @@ jobs:
             harbour_ubuntu_64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
+            harbour_win_arm_msvc.yml
           )
           missing=0
           : > runs.txt

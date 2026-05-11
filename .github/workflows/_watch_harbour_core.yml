@@ -72,6 +72,7 @@ jobs:
           workflows=(
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
+            harbour_darwin_arm.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
@@ -79,6 +80,7 @@ jobs:
             harbour_ubuntu_64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
+            harbour_win_arm_msvc.yml
           )
           echo "Dispatching ${#workflows[@]} workflows (reason: ${{ steps.decide.outputs.reason }})"
           for wf in "${workflows[@]}"; do
@@ -95,6 +97,7 @@ jobs:
           workflows=(
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
+            harbour_darwin_arm.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
@@ -102,6 +105,7 @@ jobs:
             harbour_ubuntu_64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
+            harbour_win_arm_msvc.yml
           )
           runs_json=$(jq -n '[]')
           for wf in "${workflows[@]}"; do
