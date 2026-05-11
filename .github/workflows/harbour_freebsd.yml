@@ -1,0 +1,40 @@
+name: Harbour for FreeBSD
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout harbour/core repo
+      uses: actions/checkout@v4
+      with:
+       repository: harbour/core
+       path: harbour
+
+    - name: Build Harbour inside FreeBSD VM
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y gmake pcre curl
+        run: |
+          cd harbour
+          gmake HB_BUILD_CONTRIBS="" HB_WITH_PCRE=local HB_INSTALL_PREFIX="$(pwd)/../output" install
+
+    - name: Get current time
+      id: current-time
+      run: echo "formattedTime=$(date +%Y_%m_%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Harbour to artifact
+      env:
+         TIME: "${{ steps.current-time.outputs.formattedTime }}"
+      uses: actions/upload-artifact@v4
+      with:
+       name: harbour_freebsd_x64_${{ env.TIME }}
+       path: output

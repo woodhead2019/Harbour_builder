@@ -1,0 +1,80 @@
+name: Harbour for Android (NDK)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { abi: arm64,  triple: aarch64-linux-android,    pfx: aarch64-linux-android,    cpu: arm64 }
+          - { abi: armv7,  triple: armv7a-linux-androideabi,  pfx: arm-linux-androideabi,    cpu: arm }
+          - { abi: x86_64, triple: x86_64-linux-android,      pfx: x86_64-linux-android,     cpu: x86_64 }
+
+    steps:
+    - name: Checkout harbour/core repo
+      uses: actions/checkout@v4
+      with:
+       repository: harbour/core
+       path: harbour
+
+    - name: Setup Android NDK
+      id: ndk
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r26d
+        add-to-path: false
+
+    - name: Build host Harbour (compiler + hbmk2)
+      run: |
+        cd harbour
+        make HB_BUILD_CONTRIBS="" HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/host" install
+
+    - name: Create NDK toolchain shims (Harbour expects ${prefix}gcc / ${prefix}ar ...)
+      run: |
+        API=24
+        TC="${{ steps.ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin"
+        PFX="${{ matrix.pfx }}"
+        ln -sf "$TC/${{ matrix.triple }}${API}-clang"   "$TC/${PFX}-gcc"
+        ln -sf "$TC/${{ matrix.triple }}${API}-clang++" "$TC/${PFX}-g++"
+        ln -sf "$TC/llvm-ar"      "$TC/${PFX}-ar"
+        ln -sf "$TC/llvm-ranlib"  "$TC/${PFX}-ranlib"
+        ln -sf "$TC/llvm-strip"   "$TC/${PFX}-strip"
+        ln -sf "$TC/llvm-nm"      "$TC/${PFX}-nm"
+        ln -sf "$TC/llvm-objcopy" "$TC/${PFX}-objcopy"
+        ln -sf "$TC/llvm-objdump" "$TC/${PFX}-objdump"
+        ln -sf "$TC/ld.lld"       "$TC/${PFX}-ld"
+        ln -sf "$TC/${{ matrix.triple }}${API}-clang" "$TC/${PFX}-as"
+        echo "$TC" >> "$GITHUB_PATH"
+
+    - name: Cross-compile Harbour for Android (${{ matrix.abi }})
+      run: |
+        cd harbour
+        export HB_PLATFORM=android
+        export HB_COMPILER=gcc
+        export HB_CPU=${{ matrix.cpu }}
+        export HB_CCPREFIX="${{ matrix.pfx }}-"
+        export HB_HOST_BIN="$GITHUB_WORKSPACE/host/bin"
+        export HB_BUILD_CONTRIBS=""
+        export HB_BUILD_DYN=no
+        export HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/output"
+        make
+        make install
+
+    - name: Get current time
+      id: current-time
+      run: echo "formattedTime=$(date +%Y_%m_%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Harbour to artifact
+      env:
+         TIME: "${{ steps.current-time.outputs.formattedTime }}"
+      uses: actions/upload-artifact@v4
+      with:
+       name: harbour_android_${{ matrix.abi }}_${{ env.TIME }}
+       path: output

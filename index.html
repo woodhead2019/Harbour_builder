@@ -355,10 +355,10 @@
       <ol style="color: var(--text-dim); line-height: 1.8;">
         <li>Cron fires <code>_watch_harbour_core.yml</code> every hour, on the hour (UTC).</li>
         <li>It compares <code>harbour/core</code>'s HEAD SHA against the value tracked in <code>.github/last_core_sha.txt</code>.</li>
-        <li>If the SHA changed, all 10 build workflows are triggered via <code>gh workflow run</code>.</li>
+        <li>If the SHA changed, all 16 build workflows are triggered via <code>gh workflow run</code>.</li>
         <li>Each workflow installs its tree (binaries + libs + headers + contribs) to <code>HB_INSTALL_PREFIX</code> and uploads it as a GitHub Actions artifact.</li>
         <li>The new SHA is committed back to track what was last built.</li>
-        <li>When the last build of the batch finishes, <code>_publish_release.yml</code> bundles all 10 artifacts into a tagged GitHub Release named <code>core-&lt;sha7&gt;</code>.</li>
+        <li>When the last build of the batch finishes, <code>_publish_release.yml</code> bundles the artifacts into a tagged GitHub Release named <code>core-&lt;sha7&gt;</code>.</li>
       </ol>
     </div>
   </section>
@@ -390,8 +390,15 @@
     { id: "harbour_bcc_32.yml",   title: "BCC 32",   icon: "B32", platform: "win32-bcc" },
     { id: "harbour_win64_msvc.yml",     title: "MSVC 64 (vcpkg)", icon: "VCP", platform: "win64-msvc-vcpkg" },
     { id: "harbour_win64_ADS_msvc.yml", title: "MSVC 64 + ADS",   icon: "ADS", platform: "win64-msvc-ads" },
+    { id: "harbour_win_arm_msvc.yml",   title: "MSVC ARM64",      icon: "A64", platform: "win-arm64-msvc" },
     { id: "harbour_ubuntu_64.yml", title: "Ubuntu 64", icon: "GCC", platform: "linux-gcc" },
-    { id: "harbour_darwin_osx.yml", title: "macOS",    icon: "CLG", platform: "darwin-clang" },
+    { id: "harbour_ubuntu_arm64.yml", title: "Ubuntu ARM64", icon: "LA64", platform: "linux-arm64-gcc" },
+    { id: "harbour_darwin_osx.yml", title: "macOS (arm64)",    icon: "CLG", platform: "darwin-arm64-clang" },
+    { id: "harbour_darwin_arm.yml", title: "macOS arm64",      icon: "MA",  platform: "darwin-arm64" },
+    { id: "harbour_darwin_osx_x86.yml", title: "macOS x86_64", icon: "MX",  platform: "darwin-x86_64-clang" },
+    { id: "harbour_android_ndk.yml", title: "Android (NDK)",   icon: "AND", platform: "android-arm64-armv7-x86_64" },
+    { id: "harbour_ios.yml",       title: "iOS",               icon: "iOS", platform: "ios-arm64" },
+    { id: "harbour_freebsd.yml",   title: "FreeBSD",           icon: "BSD", platform: "freebsd-x86_64" },
   ];
 
   // ---------- THEME ----------

@@ -83,6 +83,9 @@ jobs:
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
             harbour_win_arm_msvc.yml
+            harbour_android_ndk.yml
+            harbour_ios.yml
+            harbour_freebsd.yml
           )
           echo "Dispatching ${#workflows[@]} workflows (reason: ${{ steps.decide.outputs.reason }})"
           for wf in "${workflows[@]}"; do
@@ -110,6 +113,9 @@ jobs:
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
             harbour_win_arm_msvc.yml
+            harbour_android_ndk.yml
+            harbour_ios.yml
+            harbour_freebsd.yml
           )
           runs_json=$(jq -n '[]')
           for wf in "${workflows[@]}"; do
