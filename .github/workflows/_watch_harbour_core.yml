@@ -72,7 +72,6 @@ jobs:
           workflows=(
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
-            harbour_darwin_arm.yml
             harbour_darwin_osx_x86.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
@@ -102,7 +101,6 @@ jobs:
           workflows=(
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
-            harbour_darwin_arm.yml
             harbour_darwin_osx_x86.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
