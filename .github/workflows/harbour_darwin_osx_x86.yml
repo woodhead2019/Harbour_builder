@@ -1,0 +1,45 @@
+name: Harbour for Apple Darwin x86_64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-13   # Intel (x86_64)
+
+
+    steps:
+    - name: Checkout harbour/core repo
+      uses: actions/checkout@v4
+      with:
+       repository: harbour/core
+       path: harbour
+
+    - name: Install dependencies
+      run: |
+         brew install curl
+         brew install pcre
+
+    - name: Compile and install Harbour
+      run: |
+        cd harbour
+        export HB_WITH_CURL="$(brew --prefix curl)/include"
+        export HB_BUILD_CONTRIBS=""
+        export HB_INSTALL_PREFIX="$GITHUB_WORKSPACE/output"
+        make
+        make install
+
+    - name: Get current time
+      id: current-time
+      run: echo "formattedTime=$(date +%Y_%m_%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Harbour to artifact
+      env:
+         TIME: "${{ steps.current-time.outputs.formattedTime }}"
+      uses: actions/upload-artifact@v4
+      with:
+       name: harbour_darwin_osx_x86_${{ env.TIME }}
+       path: output

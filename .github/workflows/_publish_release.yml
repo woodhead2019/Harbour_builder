@@ -6,12 +6,14 @@ on:
       - Harbour for Windows 32 using BCC
       - Harbour for Apple Darwin
       - Harbour for Apple Darwin ARM64
+      - Harbour for Apple Darwin x86_64
       - Harbour for Windows 32 using MinGW
       - Harbour for Windows 64 using MinGW
       - Harbour for Windows 32 using MSVC
       - Harbour for Windows 64 using MSVC
       - Harbour for Windows ARM64 using MSVC
       - Harbour for Ubuntu 64-bits
+      - Harbour for Ubuntu ARM64
       - Harbour for Win64 and ADS using msvc
       - Harbour for Win64 using msvc
     types: [completed]
@@ -73,11 +75,13 @@ jobs:
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
             harbour_darwin_arm.yml
+            harbour_darwin_osx_x86.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
             harbour_msvc_64.yml
             harbour_ubuntu_64.yml
+            harbour_ubuntu_arm64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
             harbour_win_arm_msvc.yml

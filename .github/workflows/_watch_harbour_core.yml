@@ -73,11 +73,13 @@ jobs:
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
             harbour_darwin_arm.yml
+            harbour_darwin_osx_x86.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
             harbour_msvc_64.yml
             harbour_ubuntu_64.yml
+            harbour_ubuntu_arm64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
             harbour_win_arm_msvc.yml
@@ -98,11 +100,13 @@ jobs:
             harbour_bcc_32.yml
             harbour_darwin_osx.yml
             harbour_darwin_arm.yml
+            harbour_darwin_osx_x86.yml
             harbour_mingw_32.yml
             harbour_mingw_64.yml
             harbour_msvc_32.yml
             harbour_msvc_64.yml
             harbour_ubuntu_64.yml
+            harbour_ubuntu_arm64.yml
             harbour_win64_ADS_msvc.yml
             harbour_win64_msvc.yml
             harbour_win_arm_msvc.yml
