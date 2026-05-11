@@ -171,9 +171,10 @@
     .card-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.02rem; }
     .platform-icon {
       width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center;
-      font-size: 0.8rem; font-family: var(--font-mono); font-weight: 700;
+      font-size: 1.05rem; line-height: 1; font-weight: 700;
       background: var(--accent-soft); color: var(--accent);
     }
+    .platform-icon.text { font-size: 0.8rem; font-family: var(--font-mono); }
     .status {
       display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
       border-radius: 999px; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.02em;
@@ -383,22 +384,32 @@
   const UPSTREAM = "harbour/core";
 
   const BUILDS = [
-    { id: "harbour_mingw_64.yml", title: "MinGW 64", icon: "M64", platform: "win64-mingw" },
-    { id: "harbour_mingw_32.yml", title: "MinGW 32", icon: "M32", platform: "win32-mingw" },
-    { id: "harbour_msvc_64.yml",  title: "MSVC 64",  icon: "V64", platform: "win64-msvc" },
-    { id: "harbour_msvc_32.yml",  title: "MSVC 32",  icon: "V32", platform: "win32-msvc" },
-    { id: "harbour_bcc_32.yml",   title: "BCC 32",   icon: "B32", platform: "win32-bcc" },
-    { id: "harbour_win64_msvc.yml",     title: "MSVC 64 (vcpkg)", icon: "VCP", platform: "win64-msvc-vcpkg" },
-    { id: "harbour_win64_ADS_msvc.yml", title: "MSVC 64 + ADS",   icon: "ADS", platform: "win64-msvc-ads" },
-    { id: "harbour_win_arm_msvc.yml",   title: "MSVC ARM64",      icon: "A64", platform: "win-arm64-msvc" },
-    { id: "harbour_ubuntu_64.yml", title: "Ubuntu 64", icon: "GCC", platform: "linux-gcc" },
-    { id: "harbour_ubuntu_arm64.yml", title: "Ubuntu ARM64", icon: "LA64", platform: "linux-arm64-gcc" },
-    { id: "harbour_darwin_osx.yml", title: "macOS (arm64)",    icon: "CLG", platform: "darwin-arm64-clang" },
-    { id: "harbour_darwin_osx_x86.yml", title: "macOS x86_64", icon: "MX",  platform: "darwin-x86_64-clang" },
-    { id: "harbour_android_ndk.yml", title: "Android (NDK)",   icon: "AND", platform: "android-arm64-armv7-x86_64" },
-    { id: "harbour_ios.yml",       title: "iOS",               icon: "iOS", platform: "ios-arm64" },
-    { id: "harbour_freebsd.yml",   title: "FreeBSD",           icon: "BSD", platform: "freebsd-x86_64" },
+    { id: "harbour_mingw_64.yml", title: "MinGW 64", os: "windows", icon: "M64", platform: "win64-mingw" },
+    { id: "harbour_mingw_32.yml", title: "MinGW 32", os: "windows", icon: "M32", platform: "win32-mingw" },
+    { id: "harbour_msvc_64.yml",  title: "MSVC 64",  os: "windows", icon: "V64", platform: "win64-msvc" },
+    { id: "harbour_msvc_32.yml",  title: "MSVC 32",  os: "windows", icon: "V32", platform: "win32-msvc" },
+    { id: "harbour_bcc_32.yml",   title: "BCC 32",   os: "windows", icon: "B32", platform: "win32-bcc" },
+    { id: "harbour_win64_msvc.yml",     title: "MSVC 64 (vcpkg)", os: "windows", icon: "VCP", platform: "win64-msvc-vcpkg" },
+    { id: "harbour_win64_ADS_msvc.yml", title: "MSVC 64 + ADS",   os: "windows", icon: "ADS", platform: "win64-msvc-ads" },
+    { id: "harbour_win_arm_msvc.yml",   title: "MSVC ARM64",      os: "windows", icon: "A64", platform: "win-arm64-msvc" },
+    { id: "harbour_ubuntu_64.yml", title: "Ubuntu 64", os: "linux", icon: "GCC", platform: "linux-gcc" },
+    { id: "harbour_ubuntu_arm64.yml", title: "Ubuntu ARM64", os: "linux", icon: "LA64", platform: "linux-arm64-gcc" },
+    { id: "harbour_darwin_osx.yml", title: "macOS (arm64)",    os: "apple", icon: "CLG", platform: "darwin-arm64-clang" },
+    { id: "harbour_darwin_osx_x86.yml", title: "macOS x86_64", os: "apple", icon: "MX",  platform: "darwin-x86_64-clang" },
+    { id: "harbour_android_ndk.yml", title: "Android (NDK)",   os: "android", icon: "AND", platform: "android-arm64-armv7-x86_64" },
+    { id: "harbour_ios.yml",       title: "iOS",               os: "ios", icon: "iOS", platform: "ios-arm64" },
+    { id: "harbour_freebsd.yml",   title: "FreeBSD",           os: "freebsd", icon: "BSD", platform: "freebsd-x86_64" },
   ];
+
+  // Inline monochrome OS marks (currentColor → picks up the accent tint).
+  const OS_ICONS = {
+    windows: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>`,
+    apple: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg>`,
+    ios: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg>`,
+    linux: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M14.62 8.35c-.42.28-1.75 1.04-1.95 1.19-.18.13-.34.12-.5-.04-.13-.13-.95-.93-1.2-1.18-.1-.1-.21-.13-.34-.05-.5.32-1.06.95-1.06 1.95v.04c-.7-.5-1.3-1.05-1.3-2.42 0-1.78 1.5-3.5 3.5-3.5h.02c.7 0 1.46.22 2.04.66 0 0 .04-1.42-.16-2.18-.2-.76-.86-1.74-2.18-1.74-1.86 0-2.92 1.7-2.92 3.74 0 .76.16 1.46.16 1.46-1.06.7-1.94 1.86-1.94 4.04 0 1.5.5 2.42 1.06 3.04 0 0-1.06.62-1.06 1.94 0 1.32 1.06 2.42 1.06 3.04 0 .62-.5 1.04-.5 1.86 0 1.26 1.24 2.04 3.48 2.04 2.92 0 4.36-1.26 4.36-2.6 0-.88-.5-1.3-.5-1.92 0-.62 1.06-1.7 1.06-3.04 0-1.32-1.06-1.94-1.06-1.94.56-.62 1.06-1.54 1.06-3.04 0-2.18-.88-3.34-1.94-4.04z"/></svg>`,
+    android: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24a11.46 11.46 0 0 0-8.94 0L5.65 5.67c-.19-.29-.58-.38-.87-.2-.28.18-.37.54-.22.83L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52zM7 15.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5zm10 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z"/></svg>`,
+    freebsd: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M3.5 2.6c.7 0 1.7.5 2.8 1.4A10 10 0 0 1 12 2.2c2.1 0 4 .6 5.7 1.8 1.1-.9 2.1-1.4 2.8-1.4.6 0 .9.4.9 1.1 0 .9-.5 2.2-1.3 3.6 1 1.5 1.5 3.2 1.5 5C21.8 17.7 17.4 21.8 12 21.8S2.2 17.7 2.2 12.3c0-1.8.5-3.5 1.5-5C2.9 5.9 2.4 4.6 2.4 3.7c0-.7.4-1.1 1.1-1.1zM9 11.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm6 0a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/></svg>`,
+  };
 
   // ---------- THEME ----------
   const themeBtn = document.getElementById("theme-toggle");
@@ -425,7 +436,7 @@
     el.innerHTML = `
       <div class="card-head">
         <div class="card-title">
-          <span class="platform-icon">${b.icon}</span>
+          <span class="platform-icon${OS_ICONS[b.os] ? "" : " text"}" title="${b.os || b.icon}">${OS_ICONS[b.os] || b.icon}</span>
           <span>${b.title}</span>
         </div>
         <span class="status unknown" data-role="status"><span class="pulse"></span><span data-role="status-label">loading</span></span>
