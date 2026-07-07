@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-07T15:00:38Z",
-  "upstream_sha": "bc4ea89e214c0cf8f50c4df6978065c45d8de0c9",
-  "last_built_sha": "0d3b43954ab868e4b7f45908c4e274d0fbe0ba3d",
+  "generated_at": "2026-07-07T15:58:33Z",
+  "upstream_sha": "6df4c08b98c808904e0c19effbc09523af010ed6",
+  "last_built_sha": "bc4ea89e214c0cf8f50c4df6978065c45d8de0c9",
   "just_dispatched": true,
   "repo_stars": 41,
   "total_downloads": 83,
@@ -10,215 +10,223 @@
     {
       "file": "harbour_bcc_32.yml",
       "run": {
-        "id": 28876224694,
-        "run_number": 130,
+        "id": 28880174901,
+        "run_number": 131,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876224694",
-        "updated_at": "2026-07-07T15:00:09Z",
-        "created_at": "2026-07-07T15:00:02Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880174901",
+        "updated_at": "2026-07-07T15:58:14Z",
+        "created_at": "2026-07-07T15:58:09Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_darwin_osx.yml",
       "run": {
-        "id": 28876227350,
-        "run_number": 226,
+        "id": 28880176231,
+        "run_number": 227,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876227350",
-        "updated_at": "2026-07-07T15:00:11Z",
-        "created_at": "2026-07-07T15:00:03Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880176231",
+        "updated_at": "2026-07-07T15:58:16Z",
+        "created_at": "2026-07-07T15:58:11Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_darwin_osx_x86.yml",
       "run": {
-        "id": 28876229726,
-        "run_number": 3,
+        "id": 28880177555,
+        "run_number": 4,
         "status": "queued",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876229726",
-        "updated_at": "2026-07-07T15:00:06Z",
-        "created_at": "2026-07-07T15:00:06Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880177555",
+        "updated_at": "2026-07-07T15:58:12Z",
+        "created_at": "2026-07-07T15:58:12Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_mingw_32.yml",
       "run": {
-        "id": 28876232621,
-        "run_number": 111,
+        "id": 28880178688,
+        "run_number": 112,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876232621",
-        "updated_at": "2026-07-07T15:00:19Z",
-        "created_at": "2026-07-07T15:00:08Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880178688",
+        "updated_at": "2026-07-07T15:58:19Z",
+        "created_at": "2026-07-07T15:58:13Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_mingw_64.yml",
       "run": {
-        "id": 28876235127,
-        "run_number": 185,
+        "id": 28880180091,
+        "run_number": 186,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876235127",
-        "updated_at": "2026-07-07T15:00:18Z",
-        "created_at": "2026-07-07T15:00:10Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880180091",
+        "updated_at": "2026-07-07T15:58:21Z",
+        "created_at": "2026-07-07T15:58:15Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_msvc_32.yml",
       "run": {
-        "id": 28876237955,
-        "run_number": 134,
+        "id": 28880181470,
+        "run_number": 135,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876237955",
-        "updated_at": "2026-07-07T15:00:17Z",
-        "created_at": "2026-07-07T15:00:12Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880181470",
+        "updated_at": "2026-07-07T15:58:21Z",
+        "created_at": "2026-07-07T15:58:16Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_msvc_64.yml",
       "run": {
-        "id": 28876239983,
-        "run_number": 148,
+        "id": 28880182997,
+        "run_number": 149,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876239983",
-        "updated_at": "2026-07-07T15:00:21Z",
-        "created_at": "2026-07-07T15:00:14Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880182997",
+        "updated_at": "2026-07-07T15:58:23Z",
+        "created_at": "2026-07-07T15:58:17Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ubuntu_64.yml",
       "run": {
-        "id": 28876242226,
-        "run_number": 211,
+        "id": 28880185060,
+        "run_number": 212,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876242226",
-        "updated_at": "2026-07-07T15:00:21Z",
-        "created_at": "2026-07-07T15:00:16Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880185060",
+        "updated_at": "2026-07-07T15:58:24Z",
+        "created_at": "2026-07-07T15:58:19Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ubuntu_arm64.yml",
       "run": {
-        "id": 28876244739,
-        "run_number": 3,
+        "id": 28880186367,
+        "run_number": 4,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876244739",
-        "updated_at": "2026-07-07T15:00:29Z",
-        "created_at": "2026-07-07T15:00:18Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880186367",
+        "updated_at": "2026-07-07T15:58:28Z",
+        "created_at": "2026-07-07T15:58:20Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win64_ADS_msvc.yml",
       "run": {
-        "id": 28876247095,
-        "run_number": 119,
+        "id": 28880187779,
+        "run_number": 120,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876247095",
-        "updated_at": "2026-07-07T15:00:26Z",
-        "created_at": "2026-07-07T15:00:20Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880187779",
+        "updated_at": "2026-07-07T15:58:27Z",
+        "created_at": "2026-07-07T15:58:22Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win64_msvc.yml",
       "run": {
-        "id": 28876249481,
-        "run_number": 159,
+        "id": 28880189000,
+        "run_number": 160,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876249481",
-        "updated_at": "2026-07-07T15:00:28Z",
-        "created_at": "2026-07-07T15:00:22Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880189000",
+        "updated_at": "2026-07-07T15:58:30Z",
+        "created_at": "2026-07-07T15:58:23Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win_arm_msvc.yml",
       "run": {
-        "id": 28876252374,
-        "run_number": 3,
+        "id": 28880190544,
+        "run_number": 4,
         "status": "in_progress",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876252374",
-        "updated_at": "2026-07-07T15:00:29Z",
-        "created_at": "2026-07-07T15:00:24Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880190544",
+        "updated_at": "2026-07-07T15:58:29Z",
+        "created_at": "2026-07-07T15:58:24Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_android_ndk.yml",
       "run": {
-        "id": 28876254528,
-        "run_number": 3,
-        "status": "in_progress",
+        "id": 28880191864,
+        "run_number": 4,
+        "status": "queued",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876254528",
-        "updated_at": "2026-07-07T15:00:34Z",
-        "created_at": "2026-07-07T15:00:26Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880191864",
+        "updated_at": "2026-07-07T15:58:26Z",
+        "created_at": "2026-07-07T15:58:26Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ios.yml",
       "run": {
-        "id": 28876256761,
-        "run_number": 4,
+        "id": 28880192990,
+        "run_number": 5,
         "status": "queued",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876256761",
-        "updated_at": "2026-07-07T15:00:27Z",
-        "created_at": "2026-07-07T15:00:27Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880192990",
+        "updated_at": "2026-07-07T15:58:27Z",
+        "created_at": "2026-07-07T15:58:27Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_freebsd.yml",
       "run": {
-        "id": 28876258954,
-        "run_number": 3,
+        "id": 28880194465,
+        "run_number": 4,
         "status": "queued",
         "conclusion": null,
-        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28876258954",
-        "updated_at": "2026-07-07T15:00:29Z",
-        "created_at": "2026-07-07T15:00:29Z",
-        "head_sha": "7c69e6f26fa1ec32fee64ef1587633f84f8cd322",
+        "html_url": "https://github.com/FiveTechSoft/Harbour_builder/actions/runs/28880194465",
+        "updated_at": "2026-07-07T15:58:28Z",
+        "created_at": "2026-07-07T15:58:28Z",
+        "head_sha": "1fdbc5e18b28fdaa9a352282cbecaf3a532a9afd",
         "run_attempt": 1
       }
     }
   ],
   "recent_commits": [
+    {
+      "author": "FiveTechSoft",
+      "date": "2026-07-07T15:04:13Z",
+      "html_url": "https://github.com/harbour/core/commit/6df4c08b98c808904e0c19effbc09523af010ed6",
+      "sha": "6df4c08b98c808904e0c19effbc09523af010ed6",
+      "short_sha": "6df4c08",
+      "subject": "Fix release-windows: use sequential install to avoid parallel race"
+    },
     {
       "author": "FiveTechSoft",
       "date": "2026-07-07T14:53:44Z",
@@ -290,14 +298,6 @@
       "sha": "99434cd641bc20f84545a974c0a9794444114c9d",
       "short_sha": "99434cd",
       "subject": "2026-02-27 21:27 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)"
-    },
-    {
-      "author": "druzus",
-      "date": "2026-02-26T22:30:31Z",
-      "html_url": "https://github.com/harbour/core/commit/ee7279e537c05936e0282910d9ec7902f6dc0e8b",
-      "sha": "ee7279e537c05936e0282910d9ec7902f6dc0e8b",
-      "short_sha": "ee7279e",
-      "subject": "2026-02-26 23:30 UTC+0100 Przemyslaw Czerpak (druzus/at/poczta.onet.pl)"
     }
   ]
 }
