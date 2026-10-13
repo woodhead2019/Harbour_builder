@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-13T10:09:26Z",
-  "upstream_sha": "6ce565ad044085dd2c6bf62dcb14f13aa1aed021",
+  "generated_at": "2026-10-13T17:58:12Z",
+  "upstream_sha": "11bf837c69060bf54975b5dd01dc94b09a07de72",
   "last_built_sha": "6ce565ad044085dd2c6bf62dcb14f13aa1aed021",
-  "just_dispatched": false,
+  "just_dispatched": true,
   "repo_stars": 0,
   "total_downloads": 28,
   "releases_count": 1,
@@ -10,299 +10,315 @@
     {
       "file": "harbour_bcc_32.yml",
       "run": {
-        "id": 38164598744,
-        "run_number": 15,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164598744",
-        "updated_at": "2026-10-11T18:40:19Z",
-        "created_at": "2026-10-11T18:37:33Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442833520,
+        "run_number": 16,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442833520",
+        "updated_at": "2026-10-13T17:57:28Z",
+        "created_at": "2026-10-13T17:57:23Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_bcc_64.yml",
       "run": {
-        "id": 38164600612,
-        "run_number": 4,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164600612",
-        "updated_at": "2026-10-11T18:42:43Z",
-        "created_at": "2026-10-11T18:37:34Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442837063,
+        "run_number": 5,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442837063",
+        "updated_at": "2026-10-13T17:57:29Z",
+        "created_at": "2026-10-13T17:57:25Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_clang_32.yml",
       "run": {
-        "id": 38164602387,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164602387",
-        "updated_at": "2026-10-11T18:48:53Z",
-        "created_at": "2026-10-11T18:37:36Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442840742,
+        "run_number": 3,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442840742",
+        "updated_at": "2026-10-13T17:57:31Z",
+        "created_at": "2026-10-13T17:57:27Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_clang_64.yml",
       "run": {
-        "id": 38164603921,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164603921",
-        "updated_at": "2026-10-11T18:55:23Z",
-        "created_at": "2026-10-11T18:37:38Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442845017,
+        "run_number": 3,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442845017",
+        "updated_at": "2026-10-13T17:57:33Z",
+        "created_at": "2026-10-13T17:57:29Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_zig_32.yml",
       "run": {
-        "id": 38164605807,
-        "run_number": 1,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164605807",
-        "updated_at": "2026-10-11T18:49:42Z",
-        "created_at": "2026-10-11T18:37:39Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442849020,
+        "run_number": 2,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442849020",
+        "updated_at": "2026-10-13T17:57:36Z",
+        "created_at": "2026-10-13T17:57:31Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_zig_64.yml",
       "run": {
-        "id": 38164607682,
-        "run_number": 1,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164607682",
-        "updated_at": "2026-10-11T18:54:55Z",
-        "created_at": "2026-10-11T18:37:41Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442853191,
+        "run_number": 2,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442853191",
+        "updated_at": "2026-10-13T17:57:37Z",
+        "created_at": "2026-10-13T17:57:32Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_darwin_osx.yml",
       "run": {
-        "id": 38164609371,
-        "run_number": 5,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164609371",
-        "updated_at": "2026-10-11T18:41:41Z",
-        "created_at": "2026-10-11T18:37:42Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442856981,
+        "run_number": 6,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442856981",
+        "updated_at": "2026-10-13T17:57:42Z",
+        "created_at": "2026-10-13T17:57:34Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_darwin_osx_x86.yml",
       "run": {
-        "id": 38164611217,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164611217",
-        "updated_at": "2026-10-11T18:42:50Z",
-        "created_at": "2026-10-11T18:37:44Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442861245,
+        "run_number": 3,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442861245",
+        "updated_at": "2026-10-13T17:57:41Z",
+        "created_at": "2026-10-13T17:57:36Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_mingw_32.yml",
       "run": {
-        "id": 38164612718,
-        "run_number": 5,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164612718",
-        "updated_at": "2026-10-11T18:46:32Z",
-        "created_at": "2026-10-11T18:37:46Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442866065,
+        "run_number": 6,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442866065",
+        "updated_at": "2026-10-13T17:57:42Z",
+        "created_at": "2026-10-13T17:57:38Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_mingw_64.yml",
       "run": {
-        "id": 38164614506,
-        "run_number": 3,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164614506",
-        "updated_at": "2026-10-11T18:48:54Z",
-        "created_at": "2026-10-11T18:37:47Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442870514,
+        "run_number": 4,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442870514",
+        "updated_at": "2026-10-13T17:57:44Z",
+        "created_at": "2026-10-13T17:57:40Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_msvc_32.yml",
       "run": {
-        "id": 38164616231,
-        "run_number": 9,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164616231",
-        "updated_at": "2026-10-11T18:46:15Z",
-        "created_at": "2026-10-11T18:37:49Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442874377,
+        "run_number": 10,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442874377",
+        "updated_at": "2026-10-13T17:57:47Z",
+        "created_at": "2026-10-13T17:57:42Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_msvc_64.yml",
       "run": {
-        "id": 38164617730,
-        "run_number": 5,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164617730",
-        "updated_at": "2026-10-11T18:43:08Z",
-        "created_at": "2026-10-11T18:37:50Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442878216,
+        "run_number": 6,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442878216",
+        "updated_at": "2026-10-13T17:57:48Z",
+        "created_at": "2026-10-13T17:57:44Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_watcom.yml",
       "run": {
-        "id": 38164619455,
-        "run_number": 1,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164619455",
-        "updated_at": "2026-10-11T18:39:44Z",
-        "created_at": "2026-10-11T18:37:52Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442882115,
+        "run_number": 2,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442882115",
+        "updated_at": "2026-10-13T17:57:49Z",
+        "created_at": "2026-10-13T17:57:45Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ubuntu_64.yml",
       "run": {
-        "id": 38164621155,
-        "run_number": 5,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164621155",
-        "updated_at": "2026-10-11T18:43:00Z",
-        "created_at": "2026-10-11T18:37:53Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442885459,
+        "run_number": 6,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442885459",
+        "updated_at": "2026-10-13T17:57:52Z",
+        "created_at": "2026-10-13T17:57:47Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ubuntu_arm64.yml",
       "run": {
-        "id": 38164622740,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164622740",
-        "updated_at": "2026-10-11T18:43:08Z",
-        "created_at": "2026-10-11T18:37:55Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442889183,
+        "run_number": 3,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442889183",
+        "updated_at": "2026-10-13T17:57:56Z",
+        "created_at": "2026-10-13T17:57:49Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win64_ADS_msvc.yml",
       "run": {
-        "id": 38164624396,
-        "run_number": 5,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164624396",
-        "updated_at": "2026-10-11T18:52:20Z",
-        "created_at": "2026-10-11T18:37:56Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442893869,
+        "run_number": 6,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442893869",
+        "updated_at": "2026-10-13T17:57:55Z",
+        "created_at": "2026-10-13T17:57:51Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win64_msvc.yml",
       "run": {
-        "id": 38164626416,
-        "run_number": 4,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164626416",
-        "updated_at": "2026-10-11T18:48:40Z",
-        "created_at": "2026-10-11T18:37:58Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442897824,
+        "run_number": 5,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442897824",
+        "updated_at": "2026-10-13T17:57:57Z",
+        "created_at": "2026-10-13T17:57:53Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_win_arm_msvc.yml",
       "run": {
-        "id": 38164628244,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164628244",
-        "updated_at": "2026-10-11T18:44:21Z",
-        "created_at": "2026-10-11T18:37:59Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442901832,
+        "run_number": 3,
+        "status": "in_progress",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442901832",
+        "updated_at": "2026-10-13T17:57:59Z",
+        "created_at": "2026-10-13T17:57:55Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_android_ndk.yml",
       "run": {
-        "id": 38164630306,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164630306",
-        "updated_at": "2026-10-11T18:47:09Z",
-        "created_at": "2026-10-11T18:38:01Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442906348,
+        "run_number": 3,
+        "status": "queued",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442906348",
+        "updated_at": "2026-10-13T17:57:56Z",
+        "created_at": "2026-10-13T17:57:56Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_ios.yml",
       "run": {
-        "id": 38164631962,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164631962",
-        "updated_at": "2026-10-11T18:46:04Z",
-        "created_at": "2026-10-11T18:38:02Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442910201,
+        "run_number": 3,
+        "status": "queued",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442910201",
+        "updated_at": "2026-10-13T17:57:58Z",
+        "created_at": "2026-10-13T17:57:58Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     },
     {
       "file": "harbour_freebsd.yml",
       "run": {
-        "id": 38164633848,
-        "run_number": 2,
-        "status": "completed",
-        "conclusion": "success",
-        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38164633848",
-        "updated_at": "2026-10-11T18:43:58Z",
-        "created_at": "2026-10-11T18:38:04Z",
-        "head_sha": "e49d2476bba13fc60336d0c1e0dacbddd43be95b",
+        "id": 38442915171,
+        "run_number": 3,
+        "status": "queued",
+        "conclusion": null,
+        "html_url": "https://github.com/woodhead2019/Harbour_builder/actions/runs/38442915171",
+        "updated_at": "2026-10-13T17:58:00Z",
+        "created_at": "2026-10-13T17:58:00Z",
+        "head_sha": "51d41c57b2b5b64272fc878244bbbc87ac6579b8",
         "run_attempt": 1
       }
     }
   ],
   "recent_commits": [
+    {
+      "author": "FiveTech AI",
+      "date": "2026-10-13T15:02:17Z",
+      "html_url": "https://github.com/FiveTechSoft/harbour/commit/11bf837c69060bf54975b5dd01dc94b09a07de72",
+      "sha": "11bf837c69060bf54975b5dd01dc94b09a07de72",
+      "short_sha": "11bf837",
+      "subject": "Remove unused Windows GT standard-handle bookkeeping"
+    },
+    {
+      "author": "FiveTech AI",
+      "date": "2026-10-13T13:47:27Z",
+      "html_url": "https://github.com/FiveTechSoft/harbour/commit/e32695fdca492a88d6eb26e022ebddc75eff7b2e",
+      "sha": "e32695fdca492a88d6eb26e022ebddc75eff7b2e",
+      "short_sha": "e32695f",
+      "subject": "Fix Clang 23 unused global warnings in RDD and symbol startup code"
+    },
     {
       "author": "FiveTechSoft",
       "date": "2026-10-11T16:06:57Z",
@@ -366,22 +382,6 @@
       "sha": "8ac3af7f2417e1615dcd3170f60f6bc141834ab4",
       "short_sha": "8ac3af7",
       "subject": "2026-08-26 19:55 UTC+0100 Phil Krylov (phil a t krylov.eu) (#411)"
-    },
-    {
-      "author": "tuffnatty",
-      "date": "2026-08-26T13:05:25Z",
-      "html_url": "https://github.com/FiveTechSoft/harbour/commit/9d54c50fb6cb4fba0aca15fa345fc5c372866e52",
-      "sha": "9d54c50fb6cb4fba0aca15fa345fc5c372866e52",
-      "short_sha": "9d54c50",
-      "subject": "2026-08-26 13:17 UTC+0100 Phil Krylov (phil a t krylov.eu) (#410) [ci skip]"
-    },
-    {
-      "author": "dszlage",
-      "date": "2026-08-18T12:56:01Z",
-      "html_url": "https://github.com/FiveTechSoft/harbour/commit/bee221e83e580d45076dfc9afa1ce43d9aba521b",
-      "sha": "bee221e83e580d45076dfc9afa1ce43d9aba521b",
-      "short_sha": "bee221e",
-      "subject": "hbtip: fix MIME-Version header capitalization (#409)"
     }
   ]
 }
